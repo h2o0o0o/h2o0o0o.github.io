@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Счётчик пользователей</title>
+  <style>
+    body {
+      display: flex;
+      height: 100vh;
+      justify-content: center;
+      align-items: center;
+      font-size: 2em;
+      background-color: #f0f0f0;
+    }
+  </style>
+</head>
+<body>
+  <div>Текущих посетителей: <span id="counter">0</span></div>
+
+  <!-- Вставьте сюда скрипт Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+  <script>
+    // Вставьте ваш конфигурационный объект Firebase
+    const firebaseConfig = {
+      apiKey: "ВАШ_API_KEY",
+      authDomain: "ВАШ_PROJECT_ID.firebaseapp.com",
+      databaseURL: "https://ВАШ_PROJECT_ID-default-rtdb.firebaseio.com",
+      projectId: "ВАШ_PROJECT_ID",
+      storageBucket: "ВАШ_PROJECT_ID.appspot.com",
+      messagingSenderId: "ВАШ_MESSAGING_SENDER_ID",
+      appId: "ВАШ_APP_ID"
+    };
+
+    // Инициализация Firebase
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    // Ссылка на счётчик
+    const counterRef = database.ref('activeUsers');
+
+    // Увеличиваем счётчик при загрузке страницы
+    counterRef.transaction(current => {
+      return (current || 0) + 1;
+    });
+
+    // Уменьшаем счётчик при закрытии страницы
+    window.addEventListener('beforeunload', () => {
+      counterRef.transaction(current => {
+        return (current || 0) - 1;
+      });
+    });
+
+    // Отслеживаем изменения счётчика в реальном времени
+    counterRef.on('value', snapshot => {
+      const count = snapshot.val();
+      document.getElementById('counter').textContent = count || 0;
+    });
+  </script>
+</body>
+</html>
