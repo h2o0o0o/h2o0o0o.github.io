@@ -17,12 +17,12 @@
 <body>
   <div>Текущих посетителей: <span id="counter">0</span></div>
 
-  <!-- Вставьте сюда скрипт Firebase SDK -->
+  <!-- Подключение Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
   <script>
-    // Вставьте ваш конфигурационный объект Firebase
+    // Ваши конфигурационные данные Firebase
     const firebaseConfig = {
       apiKey: "ВАШ_API_KEY",
       authDomain: "ВАШ_PROJECT_ID.firebaseapp.com",
@@ -37,25 +37,26 @@
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
-    // Ссылка на счётчик
-    const counterRef = database.ref('activeUsers');
+    // Генерация уникального идентификатора для пользователя
+    const userId = Date.now() + Math.random().toString(36).substr(2, 9);
 
-    // Увеличиваем счётчик при загрузке страницы
-    counterRef.transaction(current => {
-      return (current || 0) + 1;
-    });
+    // Ссылка на присутствие пользователя
+    const userRef = database.ref('activeUsers/' + userId);
 
-    // Уменьшаем счётчик при закрытии страницы
-    window.addEventListener('beforeunload', () => {
-      counterRef.transaction(current => {
-        return (current || 0) - 1;
-      });
-    });
+    // Установка присутствия пользователя
+    userRef.set(true);
 
-    // Отслеживаем изменения счётчика в реальном времени
-    counterRef.on('value', snapshot => {
-      const count = snapshot.val();
-      document.getElementById('counter').textContent = count || 0;
+    // Удаление присутствия при отключении
+    userRef.onDisconnect().remove();
+
+    // Ссылка на список активных пользователей
+    const activeUsersRef = database.ref('activeUsers');
+
+    // Отслеживание изменений в списке активных пользователей
+    activeUsersRef.on('value', snapshot => {
+      const users = snapshot.val();
+      const count = users ? Object.keys(users).length : 0;
+      document.getElementById('counter').textContent = count;
     });
   </script>
 </body>
