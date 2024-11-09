@@ -1,0 +1,1996 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>3D Spatial Audio Editor</title>
+    <!-- Подключение Font Awesome для иконок -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Подключение Google Fonts для шрифта Roboto -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Переменные для удобства управления цветовой схемой */
+        :root {
+            --primary-color: #ff9800;
+            --background-dark: #1e1e1e;
+            --background-medium: #2c2c2c;
+            --background-light: #3a3a3a;
+            --text-color: #e0e0e0;
+            --border-color: #424242;
+            --button-hover: #616161;
+            --indicator-color: #ff9800;
+            --success-color: #4caf50;
+            --error-color: #f44336;
+            --scrollbar-bg: #2c2c2c;
+            --scrollbar-thumb: #616161;
+        }
+
+        /* Общие стили */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--background-dark);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* Контейнер Grid */
+        #container {
+            display: grid;
+            grid-template-areas:
+                "header header"
+                "main sidebar"
+                "footer footer";
+            grid-template-columns: 1fr 350px;
+            grid-template-rows: 60px 1fr 150px;
+            height: 100vh;
+            position: relative;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        /* Стили для скроллбара */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--scrollbar-bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--scrollbar-thumb);
+            border-radius: 4px;
+        }
+
+        /* Header */
+        header {
+            grid-area: header;
+            background-color: var(--background-medium);
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+            transition: background-color 0.3s ease-in-out;
+            z-index: 2;
+        }
+
+        header h1 {
+            color: var(--primary-color);
+            margin: 0;
+            font-size: 20px;
+            letter-spacing: 1px;
+            font-weight: 700;
+        }
+
+        /* Кнопки в Header */
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .header-buttons label,
+        .header-buttons button {
+            background-color: var(--background-light);
+            color: var(--text-color);
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out;
+            position: relative;
+            border: none;
+        }
+
+        .header-buttons label:hover,
+        .header-buttons button:hover {
+            background-color: var(--button-hover);
+            transform: translateY(-3px);
+        }
+
+        .header-buttons input[type="file"] {
+            display: none;
+        }
+
+        /* Sidebar */
+        #sidebar {
+            grid-area: sidebar;
+            background-color: var(--background-medium);
+            border-left: 1px solid var(--border-color);
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            box-sizing: border-box;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        /* Sidebar Sections */
+        #sidebar h2 {
+            color: var(--primary-color);
+            font-size: 18px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 5px;
+            font-weight: 500;
+        }
+
+        /* Main Content */
+        #main {
+            grid-area: main;
+            background-color: var(--background-dark);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        #viewportContainer {
+            display: grid;
+            grid-template-columns: 50% 50%;
+            flex: 1;
+            overflow: hidden;
+            transition: grid-template-columns 0.7s ease-in-out;
+            height: 100%;
+            box-sizing: border-box;
+        }
+
+        .viewport {
+            border: 1px solid var(--border-color);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--background-dark);
+            transition: opacity 0.7s ease-in-out, transform 0.7s ease-in-out;
+            width: 100%;
+            height: 100%;
+            min-width: 0;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .viewport.hidden {
+            opacity: 0;
+            transform: scale(0.95);
+            pointer-events: none;
+            transition: opacity 0.7s ease-in-out, transform 0.7s ease-in-out;
+        }
+
+        .viewportTitle {
+            background-color: var(--background-medium);
+            padding: 8px 12px;
+            font-size: 14px;
+            color: var(--primary-color);
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 500;
+            transition: background-color 0.3s ease-in-out;
+            flex-shrink: 0;
+            z-index: 1;
+        }
+
+        /* 3D Вьюпорт */
+        #threeDView {
+            position: relative;
+            height: 100%;
+            transition: background-color 0.3s ease-in-out;
+            overflow: hidden;
+        }
+
+        /* Контейнер для Three.js */
+        #threeDScene {
+            width: 100%;
+            height: 100%;
+            display: block;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        /* 2D Вьюпорт */
+        #topView {
+            position: relative;
+            height: 100%;
+            transition: background-color 0.3s ease-in-out;
+            overflow: hidden;
+        }
+
+        .grid {
+            flex: 1;
+            background-image:
+                linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            position: relative;
+            transition: opacity 0.7s ease-in-out, transform 0.7s ease-in-out;
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .listener {
+            width: 40px;
+            height: 40px;
+            background-color: var(--indicator-color);
+            border-radius: 50%;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            box-shadow: 0 0 10px rgba(255, 152, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+            transition: box-shadow 0.3s ease-in-out;
+        }
+
+        .listener i {
+            color: #ffffff;
+            font-size: 16px;
+            transition: color 0.3s ease-in-out;
+        }
+
+        .listener:hover {
+            box-shadow: 0 0 15px rgba(255, 152, 0, 0.9);
+        }
+
+        /* Перенос слайдера высоты в 2D-вьюпорте */
+        #topView .heightControl {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: var(--background-medium);
+            padding: 10px;
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+            z-index: 2;
+            color: var(--text-color);
+            font-size: 14px;
+            transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out;
+        }
+
+        #topView .heightControl label {
+            margin-bottom: 5px;
+            font-size: 12px;
+            color: var(--primary-color);
+            font-weight: 500;
+            transition: color 0.3s ease-in-out;
+        }
+
+        #topView .heightControl input[type="range"] {
+            -webkit-appearance: slider-vertical;
+            appearance: slider-vertical;
+            writing-mode: bt-lr;
+            width: 30px;
+            height: 150px;
+            background: transparent;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        /* 3D Control Panel */
+        #threeDControlPanel {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: var(--background-medium);
+            padding: 15px;
+            border-radius: 8px;
+            z-index: 4;
+            color: var(--text-color);
+            font-size: 14px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            width: 220px;
+            box-sizing: border-box;
+            transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+
+        #threeDControlPanel h2 {
+            margin-top: 0;
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+            font-weight: 500;
+            transition: color 0.3s ease-in-out;
+        }
+
+        /* Footer */
+        #footer {
+            grid-area: footer;
+            background-color: var(--background-medium);
+            padding: 10px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-top: 1px solid var(--border-color);
+            z-index: 2;
+            height: 150px;
+            box-sizing: border-box;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        #commonTimeline {
+            position: relative;
+            width: 100%;
+            height: 80px;
+            background: linear-gradient(90deg, #555 0%, #444 100%);
+            cursor: pointer;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
+            transition: background 0.3s ease-in-out;
+        }
+
+        #commonWaveformCanvas {
+            width: 100%;
+            height: 100%;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        #commonWaveformProgress {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(255, 152, 0, 0.7) 0%, rgba(255, 152, 0, 0.3) 100%);
+            pointer-events: none;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        #globalControls {
+            display: flex;
+            gap: 15px;
+            width: 100%;
+            box-sizing: border-box;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        #globalControls button {
+            background-color: var(--background-light);
+            border: none;
+            color: var(--text-color);
+            padding: 10px 20px;
+            font-size: 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
+            flex: 1;
+            font-weight: 500;
+            box-sizing: border-box;
+        }
+
+        #globalControls button:hover {
+            background-color: var(--button-hover);
+            transform: translateY(-3px);
+        }
+
+        /* Sound Panel Styles */
+        .soundPanel {
+            background-color: var(--background-medium);
+            margin-bottom: 15px;
+            border-radius: 6px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.3s ease-in-out;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        .soundPanel.selected {
+            background-color: var(--background-light);
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .soundPanelHeader {
+            background-color: var(--background-light);
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out;
+            justify-content: space-between;
+        }
+
+        .soundPanel.selected .soundPanelHeader {
+            background-color: var(--button-hover);
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .colorIndicator {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            margin-right: 10px;
+            border: 1px solid var(--text-color);
+            transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out;
+        }
+
+        .soundPanelHeader .soundInfo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .soundPanelHeader .soundName {
+            flex: 1;
+            color: var(--text-color);
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.3s ease-in-out;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .soundPanelHeader .removeSoundBtn {
+            background: none;
+            border: none;
+            color: var(--error-color);
+            font-size: 16px;
+            cursor: pointer;
+            transition: color 0.3s ease-in-out;
+        }
+
+        .soundPanelHeader .removeSoundBtn:hover {
+            color: var(--text-color);
+        }
+
+        .soundPanelContent {
+            display: none;
+            padding: 10px 15px;
+            background-color: var(--background-medium);
+            flex-direction: column;
+            gap: 10px;
+            max-width: 100%;
+            box-sizing: border-box;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .soundPanel.selected .soundPanelContent {
+            display: flex;
+            transition: display 0.3s ease-in-out;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .controls button {
+            background-color: var(--background-light);
+            color: var(--text-color);
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
+            font-size: 14px;
+            font-weight: 500;
+            flex: 1;
+        }
+
+        .controls button:hover {
+            background-color: var(--button-hover);
+            transform: translateY(-3px);
+        }
+
+        .waveformContainer {
+            position: relative;
+            height: 50px;
+            background-color: var(--background-dark);
+            border-radius: 4px;
+            cursor: pointer;
+            overflow: hidden;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .waveformCanvas {
+            width: 100%;
+            height: 100%;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .waveformProgress {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(255, 152, 0, 0.7) 0%, rgba(255, 152, 0, 0.3) 100%);
+            pointer-events: none;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        .effectControl {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .effectControl label {
+            font-size: 12px;
+            color: var(--primary-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: color 0.3s ease-in-out;
+        }
+
+        .effectControl input[type="range"] {
+            width: 100%;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .positionInputs {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .positionInputs label {
+            font-size: 12px;
+            color: var(--primary-color);
+            transition: color 0.3s ease-in-out;
+        }
+
+        .positionInputs input {
+            width: 60px;
+            background-color: var(--background-light);
+            border: none;
+            color: var(--text-color);
+            padding: 5px;
+            border-radius: 4px;
+            font-size: 14px;
+            text-align: center;
+            font-weight: 500;
+            transition: border-bottom 0.3s ease-in-out;
+        }
+
+        .positionInputs input:focus {
+            outline: none;
+            border-bottom: 1px solid var(--primary-color);
+        }
+
+        /* Toggle Buttons */
+        .toggle-buttons {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 10;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .toggle-buttons button {
+            background-color: var(--background-light);
+            border: none;
+            color: var(--text-color);
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+
+        .toggle-buttons button:hover {
+            background-color: var(--button-hover);
+            transform: translateY(-3px);
+        }
+
+        .toggle-buttons button.active {
+            background-color: var(--primary-color);
+            color: #fff;
+            transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 1200px) {
+            #container {
+                grid-template-columns: 1fr;
+                grid-template-areas:
+                    "header"
+                    "main"
+                    "sidebar"
+                    "footer";
+            }
+
+            #viewportContainer {
+                grid-template-columns: 100%;
+                transition: grid-template-columns 0.7s ease-in-out;
+            }
+
+            #sidebar {
+                order: -1;
+                height: 200px;
+            }
+
+            .heightControl {
+                right: 5px;
+            }
+
+            #threeDControlPanel {
+                width: 180px;
+            }
+        }
+
+        /* Управление в Sidebar */
+        .sidebar-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .sidebar-controls button {
+            background-color: var(--background-light);
+            border: none;
+            color: var(--text-color);
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .sidebar-controls button:hover {
+            background-color: var(--button-hover);
+            transform: translateY(-3px);
+        }
+
+        .sidebar-controls button i {
+            font-size: 16px;
+        }
+
+        /* Дополнительные стили для иконок звуков */
+        .sound-icon {
+            width: 30px;
+            height: 30px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            position: absolute;
+            cursor: pointer;
+            z-index: 2;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sound-icon i {
+            color: #fff;
+            font-size: 16px;
+        }
+
+        .sound-icon:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 10px rgba(255, 152, 0, 0.7);
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <!-- Header -->
+        <header>
+            <h1>3D Spatial Audio Editor</h1>
+            <div class="header-buttons">
+                <label for="audioInput" aria-label="Добавить аудиофайлы">
+                    <i class="fas fa-plus-circle"></i>
+                    <span class="button-text">Добавить файлы</span>
+                </label>
+                <button id="clearAllBtn" aria-label="Удалить все аудиофайлы">
+                    <i class="fas fa-trash-alt"></i>
+                    <span class="button-text">Удалить все</span>
+                </button>
+                <input type="file" id="audioInput" accept="audio/*" multiple>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div id="main">
+            <div id="viewportContainer">
+                <!-- 2D Вьюпорт -->
+                <div class="viewport" id="topView">
+                    <div class="viewportTitle">Вид сверху</div>
+                    <div class="grid" id="topGrid">
+                        <!-- Здесь будут добавляться драггируемые иконки звуковых источников -->
+                    </div>
+                    <div class="listener" aria-label="Слушатель">
+                        <i class="fas fa-headphones-alt"></i>
+                    </div>
+
+                    <!-- Перенесенный слайдер высоты -->
+                    <div class="heightControl">
+                        <label for="heightSlider">Высота Y</label>
+                        <input type="range" id="heightSlider" min="-10" max="10" step="0.1" value="0" aria-label="Слайдер высоты">
+                    </div>
+                </div>
+
+                <!-- 3D Вьюпорт -->
+                <div class="viewport" id="threeDView">
+                    <div id="threeDScene"></div>
+                    <div id="threeDControlPanel">
+                        <h2>Управление 3D</h2>
+                        <div class="effectControl">
+                            <label for="box-width">Ширина комнаты: <span id="width-value">4</span></label>
+                            <input type="range" id="box-width" min="2" max="10" step="0.1" value="4" aria-label="Слайдер ширины комнаты">
+                        </div>
+                        <div class="effectControl">
+                            <label for="box-height">Высота комнаты: <span id="height-value">3</span></label>
+                            <input type="range" id="box-height" min="2" max="10" step="0.1" value="3" aria-label="Слайдер высоты комнаты">
+                        </div>
+                        <div class="effectControl">
+                            <label for="box-depth">Глубина комнаты: <span id="depth-value">6</span></label>
+                            <input type="range" id="box-depth" min="2" max="10" step="0.1" value="6" aria-label="Слайдер глубины комнаты">
+                        </div>
+                        <div class="effectControl">
+                            <label for="globalReverbSlider">Глобальная реверберация: <span id="global-reverb-value">0</span></label>
+                            <input type="range" id="globalReverbSlider" min="0" max="1" step="0.01" value="0" aria-label="Слайдер глобальной реверберации">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div id="sidebar">
+            <!-- Управление аудио источниками -->
+            <h2>Аудио Источники</h2>
+            <div id="soundPanelsContainer">
+                <!-- Здесь будут динамически добавляться soundPanel -->
+            </div>
+
+            <!-- Управление позициями -->
+            <h2>Управление позициями</h2>
+            <div class="sidebar-controls">
+                <button id="resetPositionsBtn" aria-label="Сбросить позиции слушателя">
+                    <i class="fas fa-sync-alt"></i>
+                    <span>Сбросить позиции</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div id="footer">
+            <div id="commonTimeline" aria-label="Общий таймлайн">
+                <canvas id="commonWaveformCanvas"></canvas>
+                <div id="commonWaveformProgress"></div>
+            </div>
+            <div id="globalControls">
+                <button id="playAllBtn" aria-label="Воспроизвести все">
+                    <i class="fas fa-play"></i>
+                    <span>Воспроизвести все</span>
+                </button>
+                <button id="pauseAllBtn" aria-label="Пауза">
+                    <i class="fas fa-pause"></i>
+                    <span>Пауза</span>
+                </button>
+                <button id="stopAllBtn" aria-label="Стоп">
+                    <i class="fas fa-stop"></i>
+                    <span>Стоп</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toggle Buttons -->
+    <div class="toggle-buttons">
+        <button id="toggle2DBtn" aria-label="Скрыть/показать 2D Вьюпорт">
+            <i class="fas fa-eye"></i>
+        </button>
+        <button id="toggle3DBtn" aria-label="Скрыть/показать 3D Вьюпорт">
+            <i class="fas fa-cube"></i>
+        </button>
+    </div>
+
+    <!-- Скрипты Three.js и Контролов -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/lights/RectAreaLightUniformsLib.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/TransformControls.js"></script>
+    <script>
+        // Инициализация Three.js
+        THREE.RectAreaLightUniformsLib.init();
+
+        // Создание сцены
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x1e1e1e);
+
+        // Создание камеры
+        const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+        camera.position.set(5, 5, 10);
+
+        // Создание рендера
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(1, 1);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        document.getElementById('threeDScene').appendChild(renderer.domElement);
+
+        // Контролы камеры
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.1;
+        controls.maxPolarAngle = Math.PI / 2;
+        controls.enablePan = true;
+        controls.enableZoom = true;
+
+        // Переменные для управления выбором объектов
+        let selectableObjects = [];
+        let selectedObject = null;
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+
+        // Добавление освещения
+        const ambientLight = new THREE.AmbientLight(0x404040, 0.2);
+        scene.add(ambientLight);
+
+        const spotLight = new THREE.SpotLight(0xffffff, 1.0);
+        spotLight.position.set(-5, 10, -5);
+        spotLight.castShadow = true;
+        scene.add(spotLight);
+
+        // Создание комнаты
+        let boxWidth = 4;
+        let boxHeight = 3;
+        let boxDepth = 6;
+
+        let boxGeometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
+        const wallMaterial = new THREE.MeshStandardMaterial({
+            color: 0x2b2b2b,
+            emissive: 0x00334d,
+            metalness: 0.3,
+            roughness: 0.8,
+            side: THREE.BackSide,
+            transparent: true,
+            opacity: 0.6
+        });
+        let box = new THREE.Mesh(boxGeometry, wallMaterial);
+        box.receiveShadow = true;
+        scene.add(box);
+
+        // Добавление контуров комнаты
+        let edges = new THREE.EdgesGeometry(boxGeometry);
+        let lineMaterial = new THREE.LineBasicMaterial({ color: 0x008080 });
+        let wireframe = new THREE.LineSegments(edges, lineMaterial);
+        scene.add(wireframe);
+
+        // Дополнительное освещение
+        const rectLight = new THREE.RectAreaLight(0xffffff, 30, 2, 1.5);
+        rectLight.position.set(0, 0, -boxDepth / 2 + 0.01);
+        rectLight.rotation.y = Math.PI;
+        scene.add(rectLight);
+
+        // Экран телевизора
+        const tvGeometry = new THREE.PlaneGeometry(3.5, 2.5, 1, 1);
+        const tvMaterial = new THREE.MeshBasicMaterial({
+            color: 0xffffff,
+            emissive: 0xffffff,
+            emissiveIntensity: 1
+        });
+        let tvScreen = new THREE.Mesh(tvGeometry, tvMaterial);
+        tvScreen.position.set(0, 0, -boxDepth / 2 + 0.02);
+        scene.add(tvScreen);
+
+        // Слушатель
+        const listenerGeometry = new THREE.SphereGeometry(0.3, 32, 32);
+        const listenerMaterial = new THREE.MeshBasicMaterial({
+            color: 0xffff00,
+            emissive: 0xffff00,
+            emissiveIntensity: 1
+        });
+        const listenerMesh = new THREE.Mesh(listenerGeometry, listenerMaterial);
+        listenerMesh.position.set(0, 0, 0);
+        scene.add(listenerMesh);
+
+        // Функция для обновления размеров рендера при изменении контейнера
+        function setRendererSize() {
+            const threeDScene = document.getElementById('threeDScene');
+            const rect = threeDScene.getBoundingClientRect();
+            renderer.setSize(rect.width, rect.height);
+            camera.aspect = rect.width / rect.height;
+            camera.updateProjectionMatrix();
+        }
+
+        // Установка начальных размеров
+        setRendererSize();
+
+        // Дебаунс-функция для оптимизации обработчика изменения размеров
+        function debounce(func, wait) {
+            let timeout;
+            return function(...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), wait);
+            };
+        }
+
+        // Обработка изменения размера контейнера с помощью ResizeObserver
+        const resizeObserver = new ResizeObserver(debounce(() => {
+            setRendererSize();
+            render();
+        }, 100));
+        resizeObserver.observe(document.getElementById('threeDScene'));
+
+        // Функция рендеринга
+        function render() {
+            renderer.render(scene, camera);
+        }
+
+        // Функция анимации
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            render();
+        }
+
+        animate();
+
+        // Инициализация AudioContext
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+        // Установка позиции слушателя в AudioContext
+        audioContext.listener.positionX.setValueAtTime(0, audioContext.currentTime);
+        audioContext.listener.positionY.setValueAtTime(0, audioContext.currentTime);
+        audioContext.listener.positionZ.setValueAtTime(0, audioContext.currentTime);
+
+        // Массив для хранения звуковых источников
+        const soundSources = [];
+        let selectedSoundSource = null;
+
+        // Создаем мастер-гейн узел
+        let masterGainNode = audioContext.createGain();
+        masterGainNode.gain.value = 1;
+        masterGainNode.connect(audioContext.destination);
+
+        // Создаем глобальный узел реверберации
+        let convolverNode = audioContext.createConvolver();
+        let globalReverbGainNode = audioContext.createGain();
+        globalReverbGainNode.gain.value = 0; // Начальное значение реверберации 0
+
+        // Загрузка импульсной характеристики для реверберации
+        loadImpulseResponse('https://example.com/impulse-response.wav');
+
+        // Соединяем узлы реверберации
+        convolverNode.connect(globalReverbGainNode);
+        globalReverbGainNode.connect(masterGainNode);
+
+        // Функция загрузки импульсной характеристики
+        function loadImpulseResponse(url) {
+            fetch(url)
+                .then(response => response.arrayBuffer())
+                .then(data => audioContext.decodeAudioData(data))
+                .then(buffer => {
+                    convolverNode.buffer = buffer;
+                    console.log('Impulse response loaded');
+                })
+                .catch(err => {
+                    console.error('Error loading impulse response:', err);
+                    // Если загрузка не удалась, создаем простой импульс
+                    convolverNode.buffer = createImpulseResponse();
+                });
+        }
+
+        // Функция создания простого импульса
+        function createImpulseResponse() {
+            const sampleRate = audioContext.sampleRate;
+            const length = sampleRate * 2.5;
+            const impulse = audioContext.createBuffer(2, length, sampleRate);
+            for (let i = 0; i < impulse.numberOfChannels; i++) {
+                const channelData = impulse.getChannelData(i);
+                for (let j = 0; j < length; j++) {
+                    channelData[j] = (Math.random() * 2 - 1) * (1 - j / length);
+                }
+            }
+            return impulse;
+        }
+
+        // Функция для добавления звукового источника
+        function addSoundSource(file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const arrayBuffer = event.target.result;
+                audioContext.decodeAudioData(arrayBuffer, function(audioBuffer) {
+                    // Создание узлов для воспроизведения звука
+                    const gainNode = audioContext.createGain();
+                    const panNode = audioContext.createStereoPanner();
+                    const pannerNode = audioContext.createPanner();
+                    pannerNode.panningModel = 'HRTF';
+                    pannerNode.distanceModel = 'exponential';
+                    pannerNode.refDistance = 1;
+                    pannerNode.maxDistance = 10000;
+                    pannerNode.rolloffFactor = 2;
+                    pannerNode.coneInnerAngle = 360;
+                    pannerNode.coneOuterAngle = 0;
+                    pannerNode.coneOuterGain = 0;
+
+                    // Создаем узел для индивидуальной реверберации
+                    const reverbGainNode = audioContext.createGain();
+                    reverbGainNode.gain.value = 0; // Начальное значение реверберации 0
+
+                    // Соединение узлов
+                    gainNode.connect(panNode);
+                    panNode.connect(pannerNode);
+                    pannerNode.connect(masterGainNode); // Dry сигнал
+
+                    // Wet сигнал через реверберацию
+                    pannerNode.connect(reverbGainNode);
+                    reverbGainNode.connect(convolverNode);
+
+                    const soundId = 'sound-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+
+                    const soundSource = {
+                        id: soundId,
+                        file: file,
+                        gainNode: gainNode,
+                        panNode: panNode,
+                        pannerNode: pannerNode,
+                        reverbGainNode: reverbGainNode,
+                        audioBuffer: audioBuffer,
+                        position: { x: 0, y: 0, z: 0 },
+                        isPlaying: false,
+                        startedAt: 0,
+                        pausedAt: 0,
+                        sourceNode: null,
+                        duration: audioBuffer.duration
+                    };
+
+                    soundSources.push(soundSource);
+
+                    createSoundPanel(soundSource);
+                    addSoundIcon(soundSource);
+                    drawCommonWaveform();
+
+                    console.log('Sound source added:', soundSource);
+
+                }, function(e) {
+                    console.log('Error decoding audio data', e);
+                });
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        // Функция для создания панели звука
+        function createSoundPanel(soundSource) {
+            const soundPanelsContainer = document.getElementById('soundPanelsContainer');
+
+            // Создание элементов DOM
+            const soundPanel = document.createElement('div');
+            soundPanel.classList.add('soundPanel');
+            soundPanel.id = soundSource.id;
+
+            const soundPanelHeader = document.createElement('div');
+            soundPanelHeader.classList.add('soundPanelHeader');
+
+            const colorIndicator = document.createElement('div');
+            colorIndicator.classList.add('colorIndicator');
+            colorIndicator.style.backgroundColor = getRandomColor();
+
+            const soundInfo = document.createElement('div');
+            soundInfo.classList.add('soundInfo');
+
+            const soundName = document.createElement('div');
+            soundName.classList.add('soundName');
+            soundName.innerText = soundSource.file.name;
+
+            soundInfo.appendChild(colorIndicator);
+            soundInfo.appendChild(soundName);
+
+            const removeSoundBtn = document.createElement('button');
+            removeSoundBtn.classList.add('removeSoundBtn');
+            removeSoundBtn.innerHTML = '<i class="fas fa-times"></i>';
+            removeSoundBtn.setAttribute('aria-label', 'Удалить источник звука');
+
+            soundPanelHeader.appendChild(soundInfo);
+            soundPanelHeader.appendChild(removeSoundBtn);
+
+            const soundPanelContent = document.createElement('div');
+            soundPanelContent.classList.add('soundPanelContent');
+
+            const controlsDiv = document.createElement('div');
+            controlsDiv.classList.add('controls');
+
+            const playButton = document.createElement('button');
+            playButton.innerHTML = '<i class="fas fa-play"></i> Воспроизвести';
+            playButton.setAttribute('aria-label', 'Воспроизвести');
+
+            const pauseButton = document.createElement('button');
+            pauseButton.innerHTML = '<i class="fas fa-pause"></i> Пауза';
+            pauseButton.setAttribute('aria-label', 'Пауза');
+
+            const stopButton = document.createElement('button');
+            stopButton.innerHTML = '<i class="fas fa-stop"></i> Стоп';
+            stopButton.setAttribute('aria-label', 'Стоп');
+
+            controlsDiv.appendChild(playButton);
+            controlsDiv.appendChild(pauseButton);
+            controlsDiv.appendChild(stopButton);
+
+            const waveformContainer = document.createElement('div');
+            waveformContainer.classList.add('waveformContainer');
+
+            const waveformCanvas = document.createElement('canvas');
+            waveformCanvas.classList.add('waveformCanvas');
+
+            const waveformProgress = document.createElement('div');
+            waveformProgress.classList.add('waveformProgress');
+
+            waveformContainer.appendChild(waveformCanvas);
+            waveformContainer.appendChild(waveformProgress);
+
+            const volumeControl = document.createElement('div');
+            volumeControl.classList.add('effectControl');
+
+            const volumeLabel = document.createElement('label');
+            volumeLabel.innerText = 'Громкость';
+
+            const volumeSlider = document.createElement('input');
+            volumeSlider.type = 'range';
+            volumeSlider.min = '0';
+            volumeSlider.max = '1';
+            volumeSlider.step = '0.01';
+            volumeSlider.value = '0.5';
+            volumeSlider.setAttribute('aria-label', 'Слайдер громкости');
+
+            volumeControl.appendChild(volumeLabel);
+            volumeControl.appendChild(volumeSlider);
+
+            const panControl = document.createElement('div');
+            panControl.classList.add('effectControl');
+
+            const panLabel = document.createElement('label');
+            panLabel.innerText = 'Баланс';
+
+            const panSlider = document.createElement('input');
+            panSlider.type = 'range';
+            panSlider.min = '-1';
+            panSlider.max = '1';
+            panSlider.step = '0.01';
+            panSlider.value = '0';
+            panSlider.setAttribute('aria-label', 'Слайдер баланса');
+
+            panControl.appendChild(panLabel);
+            panControl.appendChild(panSlider);
+
+            // Реверберация
+            const reverbControl = document.createElement('div');
+            reverbControl.classList.add('effectControl');
+
+            const reverbLabel = document.createElement('label');
+            reverbLabel.innerText = 'Реверберация';
+
+            const reverbSlider = document.createElement('input');
+            reverbSlider.type = 'range';
+            reverbSlider.min = '0';
+            reverbSlider.max = '1';
+            reverbSlider.step = '0.01';
+            reverbSlider.value = '0';
+            reverbSlider.setAttribute('aria-label', 'Слайдер реверберации');
+
+            reverbControl.appendChild(reverbLabel);
+            reverbControl.appendChild(reverbSlider);
+
+            // Позиционные инпуты
+            const positionInputs = document.createElement('div');
+            positionInputs.classList.add('positionInputs');
+
+            const xLabel = document.createElement('label');
+            xLabel.innerText = 'X';
+
+            const xInput = document.createElement('input');
+            xInput.type = 'number';
+            xInput.value = '0';
+            xInput.step = '0.1';
+
+            const yLabel = document.createElement('label');
+            yLabel.innerText = 'Y';
+
+            const yInput = document.createElement('input');
+            yInput.type = 'number';
+            yInput.value = '0';
+            yInput.step = '0.1';
+
+            const zLabel = document.createElement('label');
+            zLabel.innerText = 'Z';
+
+            const zInput = document.createElement('input');
+            zInput.type = 'number';
+            zInput.value = '0';
+            zInput.step = '0.1';
+
+            positionInputs.appendChild(xLabel);
+            positionInputs.appendChild(xInput);
+            positionInputs.appendChild(yLabel);
+            positionInputs.appendChild(yInput);
+            positionInputs.appendChild(zLabel);
+            positionInputs.appendChild(zInput);
+
+            soundPanelContent.appendChild(controlsDiv);
+            soundPanelContent.appendChild(waveformContainer);
+            soundPanelContent.appendChild(volumeControl);
+            soundPanelContent.appendChild(panControl);
+            soundPanelContent.appendChild(reverbControl);
+            soundPanelContent.appendChild(positionInputs);
+
+            soundPanel.appendChild(soundPanelHeader);
+            soundPanel.appendChild(soundPanelContent);
+
+            soundPanelsContainer.appendChild(soundPanel);
+
+            // Обработчики событий
+            playButton.addEventListener('click', () => {
+                playSound(soundSource);
+            });
+
+            pauseButton.addEventListener('click', () => {
+                pauseSound(soundSource);
+            });
+
+            stopButton.addEventListener('click', () => {
+                stopSound(soundSource);
+            });
+
+            volumeSlider.addEventListener('input', () => {
+                soundSource.gainNode.gain.value = parseFloat(volumeSlider.value);
+            });
+
+            panSlider.addEventListener('input', () => {
+                soundSource.panNode.pan.value = parseFloat(panSlider.value);
+            });
+
+            reverbSlider.addEventListener('input', () => {
+                soundSource.reverbGainNode.gain.value = parseFloat(reverbSlider.value);
+            });
+
+            xInput.addEventListener('input', () => {
+                const x = parseFloat(xInput.value);
+                soundSource.position.x = x;
+                soundSource.pannerNode.positionX.setValueAtTime(x, audioContext.currentTime);
+                if (soundSource.mesh) {
+                    soundSource.mesh.position.x = x;
+                }
+                updateIconPosition(soundSource);
+            });
+
+            yInput.addEventListener('input', () => {
+                const y = parseFloat(yInput.value);
+                soundSource.position.y = y;
+                soundSource.pannerNode.positionY.setValueAtTime(y, audioContext.currentTime);
+                if (soundSource.mesh) {
+                    soundSource.mesh.position.y = y;
+                }
+                // Обновляем слайдер высоты, если источник выбран
+                if (selectedSoundSource === soundSource) {
+                    heightSlider.value = y;
+                }
+            });
+
+            zInput.addEventListener('input', () => {
+                const z = parseFloat(zInput.value);
+                soundSource.position.z = z;
+                soundSource.pannerNode.positionZ.setValueAtTime(z, audioContext.currentTime);
+                if (soundSource.mesh) {
+                    soundSource.mesh.position.z = z;
+                }
+                updateIconPosition(soundSource);
+            });
+
+            soundPanelHeader.addEventListener('click', () => {
+                // Снимаем выделение с других панелей
+                document.querySelectorAll('.soundPanel').forEach(panel => {
+                    panel.classList.remove('selected');
+                });
+                soundPanel.classList.toggle('selected');
+                selectedSoundSource = soundPanel.classList.contains('selected') ? soundSource : null;
+                // Обновляем слайдер высоты для выбранного источника
+                if (selectedSoundSource) {
+                    heightSlider.value = selectedSoundSource.position.y;
+                }
+                // Выделяем объект в 3D-сцене
+                selectObject(soundSource.mesh);
+            });
+
+            removeSoundBtn.addEventListener('click', (e) => {
+                e.stopPropagation(); // Чтобы не срабатывало раскрытие панели
+                removeSoundSource(soundSource);
+            });
+
+            // Обработка клика по индивидуальному таймлайну
+            waveformContainer.addEventListener('click', (event) => {
+                const rect = waveformContainer.getBoundingClientRect();
+                const x = event.clientX - rect.left;
+                const width = rect.width;
+                const percent = x / width;
+
+                if (soundSource.isPlaying) {
+                    soundSource.sourceNode.stop();
+                    const newTime = soundSource.audioBuffer.duration * percent;
+                    soundSource.pausedAt = newTime;
+                    playSound(soundSource);
+                } else {
+                    soundSource.pausedAt = soundSource.audioBuffer.duration * percent;
+                }
+                soundSource.domElements.waveformProgress.style.width = (percent * 100) + '%';
+            });
+
+            soundSource.domElements = {
+                soundPanel,
+                playButton,
+                pauseButton,
+                stopButton,
+                volumeSlider,
+                panSlider,
+                reverbSlider,
+                waveformCanvas,
+                waveformProgress,
+                colorIndicator,
+                xInput,
+                yInput,
+                zInput,
+                soundName,
+                soundIcon: null // Будет добавлено позже
+            };
+
+            drawWaveform(soundSource);
+        }
+
+        // Функции управления звуком
+        function playSound(soundSource) {
+            if (soundSource.isPlaying) {
+                return;
+            }
+
+            const sourceNode = audioContext.createBufferSource();
+            sourceNode.buffer = soundSource.audioBuffer;
+
+            sourceNode.connect(soundSource.gainNode);
+
+            soundSource.sourceNode = sourceNode;
+
+            sourceNode.start(0, soundSource.pausedAt || 0);
+
+            soundSource.startedAt = audioContext.currentTime - (soundSource.pausedAt || 0);
+            soundSource.isPlaying = true;
+            soundSource.pausedAt = null;
+
+            updatePlaybackProgress(soundSource);
+
+            sourceNode.onended = () => {
+                soundSource.isPlaying = false;
+                soundSource.pausedAt = 0;
+                soundSource.domElements.waveformProgress.style.width = '0%';
+            };
+        }
+
+        function pauseSound(soundSource) {
+            if (!soundSource.isPlaying) {
+                return;
+            }
+            soundSource.sourceNode.stop();
+            soundSource.pausedAt = audioContext.currentTime - soundSource.startedAt;
+            soundSource.isPlaying = false;
+        }
+
+        function stopSound(soundSource) {
+            if (soundSource.isPlaying) {
+                soundSource.sourceNode.stop();
+            }
+            soundSource.isPlaying = false;
+            soundSource.pausedAt = 0;
+            soundSource.domElements.waveformProgress.style.width = '0%';
+        }
+
+        function updatePlaybackProgress(soundSource) {
+            const duration = soundSource.audioBuffer.duration;
+            function update() {
+                if (soundSource.isPlaying) {
+                    const currentTime = audioContext.currentTime - soundSource.startedAt;
+                    const progress = (currentTime / duration) * 100;
+                    soundSource.domElements.waveformProgress.style.width = progress + '%';
+                    if (progress < 100) {
+                        requestAnimationFrame(update);
+                    } else {
+                        soundSource.isPlaying = false;
+                        soundSource.pausedAt = 0;
+                        soundSource.domElements.waveformProgress.style.width = '0%';
+                    }
+                }
+            }
+            requestAnimationFrame(update);
+        }
+
+        function drawWaveform(soundSource) {
+            const canvas = soundSource.domElements.waveformCanvas;
+            const canvasCtx = canvas.getContext('2d');
+            const width = canvas.width = canvas.offsetWidth;
+            const height = canvas.height = canvas.offsetHeight;
+
+            const buffer = soundSource.audioBuffer;
+            const data = buffer.getChannelData(0);
+
+            canvasCtx.fillStyle = '#1e1e1e';
+            canvasCtx.fillRect(0, 0, width, height);
+
+            canvasCtx.lineWidth = 1;
+            canvasCtx.strokeStyle = soundSource.domElements.colorIndicator.style.backgroundColor;
+
+            const step = Math.ceil(data.length / width);
+            const amp = height / 2;
+
+            canvasCtx.beginPath();
+            for (let i = 0; i < width; i++) {
+                let min = 1.0;
+                let max = -1.0;
+                for (let j = 0; j < step; j++) {
+                    const datum = data[(i * step) + j];
+                    if (datum < min)
+                        min = datum;
+                    if (datum > max)
+                        max = datum;
+                }
+                canvasCtx.moveTo(i, (1 + min) * amp);
+                canvasCtx.lineTo(i, (1 + max) * amp);
+            }
+            canvasCtx.stroke();
+        }
+
+        function getRandomColor() {
+            const colors = ['#f44336', '#e91e63', '#9c27b0', '#3f51b5', '#2196f3', '#03a9f4', '#009688', '#4caf50', '#8bc34a', '#cddc39', '#ffc107', '#ff9800'];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        // Функция для добавления иконки звука в 2D-вьюпорт
+        function addSoundIcon(soundSource) {
+            const topGrid = document.getElementById('topGrid');
+
+            const soundIcon = document.createElement('div');
+            soundIcon.classList.add('sound-icon');
+            soundIcon.style.backgroundColor = soundSource.domElements.colorIndicator.style.backgroundColor;
+            soundIcon.innerHTML = '<i class="fas fa-volume-up"></i>';
+
+            // Установка начальной позиции
+            soundIcon.style.left = '50%';
+            soundIcon.style.top = '50%';
+            soundIcon.style.transform = 'translate(-50%, -50%)';
+
+            topGrid.appendChild(soundIcon);
+
+            // Обработчик перетаскивания
+            soundIcon.addEventListener('mousedown', function (e) {
+                e.preventDefault();
+                const shiftX = e.clientX - soundIcon.getBoundingClientRect().left;
+                const shiftY = e.clientY - soundIcon.getBoundingClientRect().top;
+
+                function moveAt(pageX, pageY) {
+                    const rect = topGrid.getBoundingClientRect();
+                    let x = pageX - rect.left - shiftX;
+                    let y = pageY - rect.top - shiftY;
+
+                    x = Math.max(0, Math.min(x, rect.width - soundIcon.offsetWidth));
+                    y = Math.max(0, Math.min(y, rect.height - soundIcon.offsetHeight));
+
+                    soundIcon.style.left = x + 'px';
+                    soundIcon.style.top = y + 'px';
+
+                    const normalizedX = (x / rect.width) * 2 - 1;
+                    const normalizedZ = (y / rect.height) * 2 - 1;
+                    const sceneX = normalizedX * (boxWidth / 2);
+                    const sceneZ = normalizedZ * (boxDepth / 2);
+
+                    soundSource.position.x = sceneX;
+                    soundSource.position.z = sceneZ;
+                    soundSource.pannerNode.positionX.setValueAtTime(sceneX, audioContext.currentTime);
+                    soundSource.pannerNode.positionZ.setValueAtTime(sceneZ, audioContext.currentTime);
+
+                    if (soundSource.mesh) {
+                        soundSource.mesh.position.x = sceneX;
+                        soundSource.mesh.position.z = sceneZ;
+                    }
+
+                    // Обновление инпутов позиции
+                    soundSource.domElements.xInput.value = soundSource.position.x.toFixed(2);
+                    soundSource.domElements.zInput.value = soundSource.position.z.toFixed(2);
+                }
+
+                function onMouseMove(e) {
+                    moveAt(e.pageX, e.pageY);
+                }
+
+                document.addEventListener('mousemove', onMouseMove);
+
+                document.addEventListener('mouseup', function () {
+                    document.removeEventListener('mousemove', onMouseMove);
+                }, { once: true });
+            });
+
+            soundIcon.addEventListener('dragstart', function () {
+                return false;
+            });
+
+            // Обработчик выбора источника
+            soundIcon.addEventListener('click', () => {
+                // Снимаем выделение со всех панелей
+                document.querySelectorAll('.soundPanel').forEach(panel => {
+                    panel.classList.remove('selected');
+                });
+                // Находим соответствующую панель и выделяем ее
+                const soundPanel = document.getElementById(soundSource.id);
+                soundPanel.classList.add('selected');
+                selectedSoundSource = soundSource;
+                // Обновляем слайдер высоты для выбранного источника
+                heightSlider.value = selectedSoundSource.position.y;
+                // Выделяем объект в 3D-сцене
+                selectObject(soundSource.mesh);
+            });
+
+            soundSource.domElements.soundIcon = soundIcon;
+
+            // Добавление объекта в 3D-сцену
+            const geometry = new THREE.SphereGeometry(0.2, 16, 16);
+            const material = new THREE.MeshBasicMaterial({ color: soundSource.domElements.colorIndicator.style.backgroundColor });
+            const mesh = new THREE.Mesh(geometry, material);
+            mesh.position.set(soundSource.position.x, soundSource.position.y, soundSource.position.z);
+            scene.add(mesh);
+
+            // Добавляем возможность перемещения в 3D-вьюпорте
+            mesh.userData.soundSource = soundSource;
+
+            // Добавляем объект в массив выбираемых объектов
+            selectableObjects.push(mesh);
+
+            soundSource.mesh = mesh;
+        }
+
+        // Функция выделения объекта в 3D-сцене
+        function selectObject(object) {
+            if (selectedObject) {
+                // Убираем выделение с предыдущего объекта
+                selectedObject.material.emissiveIntensity = 1;
+            }
+            selectedObject = object;
+            if (selectedObject) {
+                // Подсвечиваем выделенный объект
+                selectedObject.material.emissiveIntensity = 2;
+                transformControls.attach(selectedObject);
+            } else {
+                transformControls.detach();
+            }
+        }
+
+        // Обработка кликов по 3D-сцене для выбора объектов
+        renderer.domElement.addEventListener('pointerdown', onPointerDown);
+
+        function onPointerDown(event) {
+            if (event.button !== 0) return; // Только левая кнопка мыши
+
+            const rect = renderer.domElement.getBoundingClientRect();
+            mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+            mouse.y = - ((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, camera);
+
+            const intersects = raycaster.intersectObjects(selectableObjects);
+
+            if (intersects.length > 0) {
+                const intersectedObject = intersects[0].object;
+                const soundSource = intersectedObject.userData.soundSource;
+
+                // Снимаем выделение со всех панелей
+                document.querySelectorAll('.soundPanel').forEach(panel => {
+                    panel.classList.remove('selected');
+                });
+                // Выделяем соответствующую панель
+                const soundPanel = document.getElementById(soundSource.id);
+                soundPanel.classList.add('selected');
+                selectedSoundSource = soundSource;
+                // Обновляем слайдер высоты
+                heightSlider.value = selectedSoundSource.position.y;
+
+                // Выделяем объект
+                selectObject(intersectedObject);
+            } else {
+                // Если кликнули мимо, снимаем выделение
+                selectObject(null);
+                selectedSoundSource = null;
+                document.querySelectorAll('.soundPanel').forEach(panel => {
+                    panel.classList.remove('selected');
+                });
+            }
+        }
+
+        // Добавление TransformControls
+        const transformControls = new THREE.TransformControls(camera, renderer.domElement);
+        transformControls.addEventListener('change', render);
+        transformControls.addEventListener('dragging-changed', function (event) {
+            controls.enabled = !event.value;
+        });
+        scene.add(transformControls);
+
+        // Обновление позиций иконок в 2D-вьюпорте
+        function updateIconPosition(soundSource) {
+            const topGrid = document.getElementById('topGrid');
+            const rect = topGrid.getBoundingClientRect();
+
+            const normalizedX = (soundSource.position.x / (boxWidth / 2));
+            const normalizedZ = (soundSource.position.z / (boxDepth / 2));
+
+            const x = ((normalizedX + 1) / 2) * rect.width - soundSource.domElements.soundIcon.offsetWidth / 2;
+            const y = ((normalizedZ + 1) / 2) * rect.height - soundSource.domElements.soundIcon.offsetHeight / 2;
+
+            soundSource.domElements.soundIcon.style.left = x + 'px';
+            soundSource.domElements.soundIcon.style.top = y + 'px';
+        }
+
+        // Обработка кнопок скрытия/показа вьюпортов
+        const toggle2DBtn = document.getElementById('toggle2DBtn');
+        const toggle3DBtn = document.getElementById('toggle3DBtn');
+        const viewportContainer = document.getElementById('viewportContainer');
+        const topView = document.getElementById('topView');
+        const threeDView = document.getElementById('threeDView');
+
+        let is2DVisible = true;
+        let is3DVisible = true;
+
+        toggle2DBtn.addEventListener('click', () => {
+            is2DVisible = !is2DVisible;
+            if (is2DVisible) {
+                topView.classList.remove('hidden');
+                toggle2DBtn.classList.add('active');
+                console.log('2D Вьюпорт показан');
+            } else {
+                topView.classList.add('hidden');
+                toggle2DBtn.classList.remove('active');
+                console.log('2D Вьюпорт скрыт');
+            }
+            adjustGrid();
+        });
+
+        toggle3DBtn.addEventListener('click', () => {
+            is3DVisible = !is3DVisible;
+            if (is3DVisible) {
+                threeDView.classList.remove('hidden');
+                toggle3DBtn.classList.add('active');
+                console.log('3D Вьюпорт показан');
+            } else {
+                threeDView.classList.add('hidden');
+                toggle3DBtn.classList.remove('active');
+                console.log('3D Вьюпорт скрыт');
+            }
+            adjustGrid();
+        });
+
+        function adjustGrid() {
+            if (is2DVisible && is3DVisible) {
+                viewportContainer.style.gridTemplateColumns = "50% 50%";
+            } else if (!is2DVisible && is3DVisible) {
+                viewportContainer.style.gridTemplateColumns = "0% 100%";
+            } else if (is2DVisible && !is3DVisible) {
+                viewportContainer.style.gridTemplateColumns = "100% 0%";
+            } else {
+                viewportContainer.style.gridTemplateColumns = "0% 0%";
+            }
+            setRendererSize();
+        }
+
+        // Инициализация состояния кнопок
+        toggle2DBtn.classList.add('active');
+        toggle3DBtn.classList.add('active');
+
+        // Обработка кнопок сброса позиций
+        document.getElementById('resetPositionsBtn').addEventListener('click', () => {
+            resetListenerPosition();
+            console.log('Позиции слушателя сброшены');
+        });
+
+        // Функция сброса позиции слушателя
+        function resetListenerPosition() {
+            listenerMesh.position.set(0, 0, 0);
+            audioContext.listener.positionX.setValueAtTime(0, audioContext.currentTime);
+            audioContext.listener.positionY.setValueAtTime(0, audioContext.currentTime);
+            audioContext.listener.positionZ.setValueAtTime(0, audioContext.currentTime);
+            // Обновляем слайдер высоты
+            heightSlider.value = 0;
+            render();
+        }
+
+        // Обработка изменения размеров комнаты через слайдеры
+        const boxWidthSlider = document.getElementById('box-width');
+        const boxHeightSlider = document.getElementById('box-height');
+        const boxDepthSlider = document.getElementById('box-depth');
+        const widthValue = document.getElementById('width-value');
+        const heightValue = document.getElementById('height-value');
+        const depthValue = document.getElementById('depth-value');
+
+        boxWidthSlider.addEventListener('input', () => {
+            boxWidth = parseFloat(boxWidthSlider.value);
+            widthValue.textContent = boxWidth;
+            updateBoxGeometry();
+        });
+
+        boxHeightSlider.addEventListener('input', () => {
+            boxHeight = parseFloat(boxHeightSlider.value);
+            heightValue.textContent = boxHeight;
+            updateBoxGeometry();
+        });
+
+        boxDepthSlider.addEventListener('input', () => {
+            boxDepth = parseFloat(boxDepthSlider.value);
+            depthValue.textContent = boxDepth;
+            updateBoxGeometry();
+        });
+
+        function updateBoxGeometry() {
+            scene.remove(box);
+            scene.remove(wireframe);
+
+            boxGeometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
+            box = new THREE.Mesh(boxGeometry, wallMaterial);
+            box.receiveShadow = true;
+            scene.add(box);
+
+            edges = new THREE.EdgesGeometry(boxGeometry);
+            wireframe = new THREE.LineSegments(edges, lineMaterial);
+            scene.add(wireframe);
+
+            tvScreen.position.set(0, 0, -boxDepth / 2 + 0.02);
+            rectLight.position.set(0, 0, -boxDepth / 2 + 0.01);
+
+            // Обновление позиций звуковых источников
+            soundSources.forEach(soundSource => {
+                updateIconPosition(soundSource);
+            });
+
+            render();
+        }
+
+        // Обработка слайдера высоты Y в 2D-вьюпорте
+        const heightSlider = document.getElementById('heightSlider');
+        heightSlider.addEventListener('input', () => {
+            const newY = parseFloat(heightSlider.value);
+            if (selectedSoundSource) {
+                selectedSoundSource.position.y = newY;
+                selectedSoundSource.pannerNode.positionY.setValueAtTime(newY, audioContext.currentTime);
+                if (selectedSoundSource.mesh) {
+                    selectedSoundSource.mesh.position.y = newY;
+                }
+                // Обновляем инпут Y
+                selectedSoundSource.domElements.yInput.value = newY.toFixed(2);
+            }
+        });
+
+        // Обработка перетаскивания источников в 3D-вьюпорте
+        transformControls.addEventListener('objectChange', () => {
+            const mesh = transformControls.object;
+            const soundSource = mesh.userData.soundSource;
+            if (soundSource) {
+                soundSource.position.x = mesh.position.x;
+                soundSource.position.y = mesh.position.y;
+                soundSource.position.z = mesh.position.z;
+
+                soundSource.pannerNode.positionX.setValueAtTime(mesh.position.x, audioContext.currentTime);
+                soundSource.pannerNode.positionY.setValueAtTime(mesh.position.y, audioContext.currentTime);
+                soundSource.pannerNode.positionZ.setValueAtTime(mesh.position.z, audioContext.currentTime);
+
+                // Обновляем инпуты позиции
+                soundSource.domElements.xInput.value = soundSource.position.x.toFixed(2);
+                soundSource.domElements.yInput.value = soundSource.position.y.toFixed(2);
+                soundSource.domElements.zInput.value = soundSource.position.z.toFixed(2);
+
+                // Обновляем позицию иконки в 2D-вьюпорте
+                updateIconPosition(soundSource);
+
+                // Если источник выбран, обновляем слайдер высоты
+                if (selectedSoundSource === soundSource) {
+                    heightSlider.value = soundSource.position.y;
+                }
+            }
+        });
+
+        // Обработка добавления аудиофайлов
+        document.getElementById('audioInput').addEventListener('change', (event) => {
+            const files = event.target.files;
+            console.log('Добавлены файлы:', files);
+            for (const file of files) {
+                addSoundSource(file);
+            }
+        });
+
+        // Обработка кнопки "Удалить все"
+        document.getElementById('clearAllBtn').addEventListener('click', () => {
+            soundSources.slice().forEach(soundSource => {
+                removeSoundSource(soundSource);
+            });
+            soundSources.length = 0;
+            console.log('Все файлы удалены');
+            drawCommonWaveform();
+        });
+
+        // Обработка глобальных кнопок воспроизведения
+        document.getElementById('playAllBtn').addEventListener('click', () => {
+            soundSources.forEach(soundSource => {
+                playSound(soundSource);
+            });
+            updateCommonPlaybackProgress();
+        });
+
+        document.getElementById('pauseAllBtn').addEventListener('click', () => {
+            soundSources.forEach(soundSource => {
+                pauseSound(soundSource);
+            });
+        });
+
+        document.getElementById('stopAllBtn').addEventListener('click', () => {
+            soundSources.forEach(soundSource => {
+                stopSound(soundSource);
+            });
+            document.getElementById('commonWaveformProgress').style.width = '0%';
+        });
+
+        // Функция для удаления звукового источника
+        function removeSoundSource(soundSource) {
+            if (soundSource.isPlaying) {
+                soundSource.sourceNode.stop();
+            }
+            soundSource.domElements.soundPanel.remove();
+            soundSource.domElements.soundIcon.remove();
+            scene.remove(soundSource.mesh);
+            const index = soundSources.indexOf(soundSource);
+            if (index > -1) {
+                soundSources.splice(index, 1);
+            }
+            if (selectedSoundSource === soundSource) {
+                selectedSoundSource = null;
+            }
+            // Убираем из массива выбираемых объектов
+            const objIndex = selectableObjects.indexOf(soundSource.mesh);
+            if (objIndex > -1) {
+                selectableObjects.splice(objIndex, 1);
+            }
+            drawCommonWaveform();
+        }
+
+        // Обработка клика по общему таймлайну
+        const commonTimeline = document.getElementById('commonTimeline');
+        commonTimeline.addEventListener('click', (event) => {
+            const rect = commonTimeline.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const width = rect.width;
+            const percent = x / width;
+
+            soundSources.forEach(soundSource => {
+                if (soundSource.isPlaying) {
+                    soundSource.sourceNode.stop();
+                    const newTime = soundSource.audioBuffer.duration * percent;
+                    soundSource.pausedAt = newTime;
+                    playSound(soundSource);
+                } else {
+                    soundSource.pausedAt = soundSource.audioBuffer.duration * percent;
+                }
+                soundSource.domElements.waveformProgress.style.width = (percent * 100) + '%';
+            });
+
+            document.getElementById('commonWaveformProgress').style.width = (percent * 100) + '%';
+        });
+
+        // Функция отрисовки общего таймлайна
+        function drawCommonWaveform() {
+            const canvas = document.getElementById('commonWaveformCanvas');
+            const canvasCtx = canvas.getContext('2d');
+            const width = canvas.width = canvas.offsetWidth;
+            const height = canvas.height = canvas.offsetHeight;
+
+            // Очистка холста
+            canvasCtx.clearRect(0, 0, width, height);
+
+            // Если нет звуков, ничего не рисуем
+            if (soundSources.length === 0) return;
+
+            const maxDuration = Math.max(...soundSources.map(s => s.audioBuffer.duration));
+            const samplesPerPixel = maxDuration / width;
+
+            soundSources.forEach(soundSource => {
+                const buffer = soundSource.audioBuffer;
+                const data = buffer.getChannelData(0);
+                const color = soundSource.domElements.colorIndicator.style.backgroundColor;
+
+                canvasCtx.lineWidth = 1;
+                canvasCtx.strokeStyle = color;
+                canvasCtx.beginPath();
+
+                const step = Math.ceil(data.length / width);
+                const amp = height / soundSources.length / 2;
+                const offsetY = soundSources.indexOf(soundSource) * (height / soundSources.length);
+
+                for (let i = 0; i < width; i++) {
+                    let min = 1.0;
+                    let max = -1.0;
+                    for (let j = 0; j < step; j++) {
+                        const datum = data[(i * step) + j];
+                        if (datum < min)
+                            min = datum;
+                        if (datum > max)
+                            max = datum;
+                    }
+                    canvasCtx.moveTo(i, offsetY + (1 + min) * amp);
+                    canvasCtx.lineTo(i, offsetY + (1 + max) * amp);
+                }
+                canvasCtx.stroke();
+            });
+        }
+
+        // Обновление прогресса общего таймлайна
+        function updateCommonPlaybackProgress() {
+            const maxDuration = Math.max(...soundSources.map(s => s.audioBuffer.duration));
+            function update() {
+                const currentTime = audioContext.currentTime - soundSources[0].startedAt;
+                const progress = (currentTime / maxDuration) * 100;
+                document.getElementById('commonWaveformProgress').style.width = progress + '%';
+                if (soundSources.some(s => s.isPlaying)) {
+                    requestAnimationFrame(update);
+                } else {
+                    document.getElementById('commonWaveformProgress').style.width = '0%';
+                }
+            }
+            requestAnimationFrame(update);
+        }
+
+        // Обработка изменения глобальной реверберации
+        const globalReverbSlider = document.getElementById('globalReverbSlider');
+        const globalReverbValue = document.getElementById('global-reverb-value');
+        globalReverbSlider.addEventListener('input', () => {
+            const value = parseFloat(globalReverbSlider.value);
+            globalReverbGainNode.gain.value = value;
+            globalReverbValue.textContent = value.toFixed(2);
+        });
+    </script>
+</body>
+</html>
