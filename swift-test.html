@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест Тейлор Свифт</title>
+    <style>
+        /* Основные стили */
+        body {
+            font-family: 'Arial', sans-serif;
+            background: url('taylor/testo/1.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        .return-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 192, 203, 0.8);
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 1em;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background 0.3s, transform 0.3s;
+            z-index: 1000;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .return-button:hover {
+            background: #ff69b4;
+            transform: scale(1.1);
+        }
+
+        .section {
+            padding: 40px 20px;
+            background: rgba(255, 182, 193, 0.8);
+            margin: 20px auto;
+            border-radius: 15px;
+            max-width: 900px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            animation: bounceIn 1s ease-in-out;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 2.5em;
+            color: #ff69b4;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            animation: rubberBand 1s ease-in-out;
+        }
+
+        .quiz-container {
+            background: rgba(255, 255, 255, 0.3);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+            animation: jellyIn 1s ease-in-out;
+        }
+
+        .quiz-question {
+            margin-bottom: 20px;
+            font-weight: bold;
+            font-size: 1.5em;
+            color: #ff1493;
+            animation: fadeInDown 1s ease-in-out;
+        }
+
+        .quiz-options {
+            list-style: none;
+            padding: 0;
+        }
+
+        .quiz-options li {
+            margin-bottom: 10px;
+            position: relative;
+            padding-left: 30px;
+            animation: fadeInUp 1s ease-in-out;
+        }
+
+        .quiz-options label {
+            cursor: pointer;
+            color: #fff;
+            background: rgba(255, 105, 180, 0.5);
+            padding: 5px 10px;
+            border-radius: 10px;
+            transition: background 0.3s, transform 0.3s;
+        }
+
+        .quiz-options input {
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        .quiz-options input:checked + label {
+            background: #ff69b4;
+            transform: scale(1.05);
+        }
+
+        .quiz-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .quiz-navigation button {
+            padding: 10px 20px;
+            border: none;
+            background: #ff69b4;
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.5s ease-in-out;
+            animation: bounceIn 1s ease-in-out;
+        }
+
+        .quiz-navigation button:hover {
+            background: #ff1493;
+            transform: scale(1.1);
+        }
+
+        .quiz-progress {
+            margin-top: 20px;
+            height: 20px;
+            background: #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .quiz-progress-bar {
+            height: 100%;
+            width: 0%;
+            background: #ff69b4;
+            transition: width 0.3s;
+        }
+
+        .quiz-result {
+            text-align: center;
+            animation: fadeInUp 1s ease-in-out;
+        }
+
+        .quiz-result h3 {
+            margin-bottom: 20px;
+            font-size: 2em;
+            color: #ff69b4;
+            animation: rubberBand 1s ease-in-out;
+        }
+
+        .certificate {
+            margin-top: 20px;
+            padding: 20px;
+            border: 2px solid #ff69b4;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.3);
+            animation: bounceOutIn 1s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .certificate input {
+            margin-top: 10px;
+            padding: 5px;
+            border-radius: 5px;
+            border: 1px solid #ff69b4;
+            font-size: 1em;
+            text-align: center;
+        }
+
+        .certificate img {
+            margin-top: 20px;
+            width: 80%;
+            max-width: 400px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        .download-button {
+            margin-top: 15px;
+            padding: 10px 20px;
+            border: none;
+            background: #ff69b4;
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.5s ease-in-out;
+            animation: bounceIn 1s ease-in-out;
+        }
+
+        .download-button:hover {
+            background: #ff1493;
+            transform: scale(1.1);
+        }
+
+        /* Анимации */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+            70% {
+                transform: scale(0.9);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes rubberBand {
+            0% {
+                transform: scale(1);
+            }
+            30% {
+                transform: scale(1.25, 0.75);
+            }
+            40% {
+                transform: scale(0.75, 1.25);
+            }
+            50% {
+                transform: scale(1.15, 0.85);
+            }
+            65% {
+                transform: scale(0.95, 1.05);
+            }
+            75% {
+                transform: scale(1.05, 0.95);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes bounceOutIn {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes fadeInDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Анимация слайдового эффекта */
+        @keyframes slideIn {
+            0% {
+                transform: translateY(-100%);
+            }
+            60% {
+                transform: translateY(10%);
+            }
+            80% {
+                transform: translateY(-5%);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        /* Конфетти */
+        .confetti {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            display: none;
+        }
+
+        .confetti-piece {
+            position: absolute;
+            background-color: #ff69b4;
+            width: 10px;
+            height: 10px;
+            animation: confettiAnimation 1s linear infinite;
+        }
+
+        @keyframes confettiAnimation {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(500px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="return-button" onclick="window.location.href='index.html'">⬅ Назад</button>
+
+    <!-- Секция "Тест Тейлор Свифт" -->
+    <section id="swift-test" class="section">
+        <h2>Тест на знание Тейлор Свифт</h2>
+        <div class="quiz-container">
+            <div id="quiz">
+                <div class="quiz-question" id="question">Вопрос будет загружен...</div>
+                <ul class="quiz-options" id="options">
+                    <!-- Опции будут загружены здесь -->
+                </ul>
+                <div class="quiz-navigation">
+                    <button id="prev-btn" disabled>Назад</button>
+                    <button id="next-btn">Вперед</button>
+                </div>
+                <div class="quiz-progress">
+                    <div class="quiz-progress-bar" id="progress-bar"></div>
+                </div>
+            </div>
+            <div id="result" class="quiz-result" style="display:none;">
+                <h3>Ваш результат: <span id="score"></span>/20</h3>
+                <p id="message"></p>
+                <div id="certificate" class="certificate" style="display:none;">
+                    <p>Введите ваше имя для сертификата:</p>
+                    <input type="text" id="user-name" placeholder="Ваше имя" oninput="updateCertificate()">
+                    <canvas id="certificate-canvas" width="720" height="1017"></canvas>
+                    <button class="download-button" onclick="downloadCertificate()">Скачать сертификат</button>
+                </div>
+                <button id="restart-btn">Пройти снова</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Конфетти -->
+    <div class="confetti" id="confetti"></div>
+
+    <!-- Скрипт с логикой теста -->
+    <script>
+        const quizData = [
+            { question: "Как называется альбом Тейлор Свифт, выпущенный в 2014 году, который ознаменовал её переход в поп-музыку?", options: ["Red", "Fearless", "1989", "Speak Now"], answer: 2 },
+            { question: "Как называется первый сингл Тейлор Свифт?", options: ["Love Story", "Tim McGraw", "Our Song", "Teardrops on My Guitar"], answer: 1 },
+            { question: "Как называется альбом Тейлор Свифт, выпущенный в 2020 году, который она записала во время пандемии?", options: ["Folklore", "1989", "Red", "Speak Now"], answer: 0 },
+            { question: "Какой альбом Тейлор Свифт был переиздан в 2021 году с добавлением новых треков?", options: ["Fearless (Taylor's Version)", "Red", "1989", "Reputation"], answer: 0 },
+            { question: "Как называется документальный фильм о Тейлор Свифт, выпущенный на Netflix в 2020 году?", options: ["Miss Americana", "1989", "Reputation", "Folklore"], answer: 0 },
+            { question: "Сколько раз Тейлор Свифт выигрывала премию 'Грэмми' за 'Альбом года'?", options: ["Один раз", "Два раза", "Три раза", "Четыре раза"], answer: 2 },
+            { question: "Как называется песня Тейлор Свифт, в которой она поёт о 'шарфе, оставленном в доме бывшего'?", options: ["All Too Well", "You Belong With Me", "Back To December", "Love Story"], answer: 0 },
+            { question: "С кем из этих исполнителей Тейлор Свифт не записывала совместных песен: Эд Ширан, Бон Айвер, Джастин Бибер, Брендон Ури?", options: ["Джастин Бибер", "Эд Ширан", "Бон Айвер", "Брендон Ури"], answer: 0 },
+            { question: "Как называется песня Тейлор Свифт, в которой она упоминает 'старый кардиган'?", options: ["Cardigan", "You Belong With Me", "Red", "Back To December"], answer: 0 },
+            { question: "Как называется песня Тейлор Свифт, в которой она поёт о 'пустом городе'?", options: ["Cornelia Street", "All Too Well", "Shake It Off", "Wildest Dreams"], answer: 0 },
+            { question: "Какой знак зодиака у Тейлор Свифт?", options: ["Стрелец", "Овен", "Тельца", "Рак"], answer: 0 },
+            { question: "Как называется песня Тейлор Свифт, в которой она поёт о 'письмах, написанных в песке'?", options: ["The Last Time", "All Too Well", "You Belong With Me", "Enchanted"], answer: 0 },
+            { question: "Как называется песня Тейлор Свифт, в которой она поёт о 'золотых татуировках'?", options: ["Gold Rush", "Wildest Dreams", "Call It What You Want", "Delicate"], answer: 0 },
+            { question: "Какой альбом Тейлор Свифт был первым, который она полностью написала сама?", options: ["Speak Now", "1989", "Red", "Reputation"], answer: 0 },
+            { question: "С кем из этих актёров Тейлор Свифт не встречалась: Джейк Джилленхол, Том Хиддлстон, Джо Джонас, Райан Рейнольдс?", options: ["Райан Рейнольдс", "Джейк Джилленхол", "Том Хиддлстон", "Джо Джонас"], answer: 0 },
+            { question: "Как называется песня Тейлор Свифт, в которой она поёт о 'светофорах и улицах'?", options: ["Death by a Thousand Cuts", "Look What You Made Me Do", "Red", "Blank Space"], answer: 0 },
+            { question: "Сколько студийных альбомов выпустила Тейлор Свифт на ноябрь 2024 года?", options: ["Девять", "Десять", "Одиннадцать", "Двенадцать"], answer: 1 },
+            { question: "Как называется хит, который стал международным?", options: ["Shake It Off", "We Are Never Ever Getting Back Together", "Love Story", "You Belong With Me"], answer: 0 },
+            { question: "Как называется альбом Тейлор Свифт, выпущенный в 2020 году, который она записала во время пандемии?", options: ["Folklore", "1989", "Red", "Reputation"], answer: 0 },
+            { question: "Кто был другом детства Тейлор?", options: ["Абигейл Андерсон", "Кейти Перри", "Селена Гомес", "Лорд"], answer: 0 }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        const quiz = document.getElementById('quiz');
+        const questionEl = document.getElementById('question');
+        const optionsEl = document.getElementById('options');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const progressBar = document.getElementById('progress-bar');
+        const resultEl = document.getElementById('result');
+        const scoreEl = document.getElementById('score');
+        const messageEl = document.getElementById('message');
+        const certificateEl = document.getElementById('certificate');
+        const userNameInput = document.getElementById('user-name');
+        const restartBtn = document.getElementById('restart-btn');
+        const certificateCanvas = document.getElementById('certificate-canvas');
+        const ctx = certificateCanvas.getContext('2d');
+        const confettiContainer = document.getElementById('confetti');
+
+        function loadQuestion() {
+            const currentData = quizData[currentQuestion];
+            questionEl.innerText = currentData.question;
+            optionsEl.innerHTML = '';
+            currentData.options.forEach((option, index) => {
+                const li = document.createElement('li');
+                const label = document.createElement('label');
+                const input = document.createElement('input');
+                input.type = 'radio';
+                input.name = 'option';
+                input.value = index;
+                if (index === currentData.answer) {
+                    input.dataset.correct = 'true';
+                }
+                label.appendChild(input);
+                label.appendChild(document.createTextNode(option));
+                li.appendChild(label);
+                optionsEl.appendChild(li);
+            });
+
+            prevBtn.disabled = currentQuestion === 0;
+            nextBtn.innerText = currentQuestion === quizData.length - 1 ? 'Завершить' : 'Вперед';
+            progressBar.style.width = ((currentQuestion) / quizData.length) * 100 + '%';
+
+            changeBackground();
+        }
+
+        function changeBackground() {
+            const newBackground = `url('taylor/testo/${currentQuestion + 1}.jpg') no-repeat center center fixed`;
+            document.body.style.transition = 'background 1s ease-out';
+            document.body.style.background = newBackground;
+            document.body.style.backgroundSize = 'cover';
+        }
+
+        function showResult() {
+            quiz.style.display = 'none';
+            resultEl.style.display = 'block';
+            scoreEl.innerText = score;
+            messageEl.innerText = score === 20 ? "Вы прошли тест на 100%! Поздравляем, вы настоящий Swiftie!" : "Неплохо, но есть куда расти.";
+            if (score === 20) {
+                generateCertificate();
+                certificateEl.style.display = 'block';
+                showConfetti();
+            }
+            progressBar.style.width = '100%';
+        }
+
+        function generateConfetti() {
+            // Конфетти
+            for (let i = 0; i < 100; i++) {
+                const confettiPiece = document.createElement('div');
+                confettiPiece.classList.add('confetti-piece');
+                confettiPiece.style.left = `${Math.random() * 100}%`;
+                confettiPiece.style.animationDuration = `${Math.random() * 1 + 1}s`;
+                confettiContainer.appendChild(confettiPiece);
+            }
+        }
+
+        function showConfetti() {
+            confettiContainer.style.display = 'block';
+            generateConfetti();
+            setTimeout(() => {
+                confettiContainer.style.display = 'none';
+            }, 3000);
+        }
+
+        function generateCertificate() {
+            const name = userNameInput.value || "Swiftie";
+            const img = new Image();
+            img.src = 'taylor/swiftie.jpg';
+            img.onload = () => {
+                // Очистка canvas перед перерисовкой
+                ctx.clearRect(0, 0, certificateCanvas.width, certificateCanvas.height); 
+                
+                // Рисуем изображение сертификата
+                ctx.drawImage(img, 0, 0, certificateCanvas.width, certificateCanvas.height);
+                
+                // Настроим шрифт и цвет текста
+                ctx.font = '50px Arial';
+                ctx.fillStyle = '#ff69b4';
+                
+                // Изменяем координаты для надписи
+                ctx.fillText(`Поздравляем, ${name}!`, 110, 550);
+            };
+        }
+
+        function updateCertificate() {
+            generateCertificate();
+        }
+
+        function downloadCertificate() {
+            // Обновляем сертификат перед скачиванием
+            generateCertificate();
+            
+            // Ждем, пока canvas обновится с текстом, и затем создаем ссылку для скачивания
+            setTimeout(() => {
+                const link = document.createElement('a');
+                link.download = 'swiftie_certificate.png';
+                link.href = certificateCanvas.toDataURL('image/png');
+                link.click();
+            }, 500); // Даем время на отрисовку текста (полсекунды)
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            quiz.style.display = 'block';
+            resultEl.style.display = 'none';
+            loadQuestion();
+        }
+
+        prevBtn.addEventListener('click', () => {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                loadQuestion();
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            const selectedOption = document.querySelector('input[name="option"]:checked');
+            if (selectedOption) {
+                if (selectedOption.dataset.correct === 'true') {
+                    score += 1;
+                }
+                currentQuestion++;
+                if (currentQuestion < quizData.length) {
+                    loadQuestion();
+                } else {
+                    showResult();
+                }
+            } else {
+                alert("Пожалуйста, выберите ответ перед продолжением.");
+            }
+        });
+
+        restartBtn.addEventListener('click', restartQuiz);
+
+        loadQuestion();
+    </script>
+</body>
+</html>
