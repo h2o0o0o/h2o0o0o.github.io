@@ -525,6 +525,64 @@
         }
 
         /* Секция "Супы дня" */
+
+        .soup-container-wrapper {
+            position: relative;
+            padding-bottom: 50px; /* Обеспечиваем пространство снизу для кнопок */
+        }
+
+        .scroll-buttons {
+            display: flex;
+            position: absolute;
+            bottom: 10px; /* Расположение кнопок чуть выше нижней границы */
+            right: 10px; /* Отступ справа */
+            gap: 10px; /* Расстояние между кнопками */
+            z-index: 10; /* Убедимся, что кнопки находятся поверх других элементов */
+        }
+
+        .scroll-btn {
+            background-color: rgba(255, 255, 255, 0.8);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background 0.3s, transform 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+        }
+
+        .scroll-btn:hover {
+            background-color: rgba(255, 255, 255, 1);
+            transform: scale(1.1);
+        }
+
+        .soup-container {
+            display: flex;
+            gap: 20px;
+            padding: 10px;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            width: 100%;
+        }
+
+        .soup-container::-webkit-scrollbar {
+            display: none; /* Убираем стандартную полосу прокрутки */
+        }
+
+        .soup-card {
+            border: 2px solid #ddd; /* Пример для рамки */
+            padding: 10px;
+            width: 200px; /* Примерная ширина карточек */
+        }
+
+
+
+
+
         #soups {
             text-align: center;
             animation: fadeIn 1s ease-in-out;
@@ -923,7 +981,9 @@
         }
     </style>
 </head>
-<body>
+<body> 
+
+    <body class="theme-dark">
 
     <!-- Навигационная панель -->
     <nav class="navbar">
@@ -982,76 +1042,82 @@
         <p>Кроме музыкальной деятельности, Егор активно занимается благотворительностью и участвует в различных социальных проектах. Он продолжает развиваться как артист и стремится приносить радость своим слушателям.</p>
     </section>
 
-    <!-- Секция "Супы дня" -->
-    <section id="soups" class="section">
+   <!-- Секция "Супы дня" -->
+   <section id="soups" class="section">
         <h2>Супы дня</h2>
-        <div class="soup-container">
-            <div class="soup-card" onclick="toggleDescription(this)">
-                <iframe src="https://open.spotify.com/embed/playlist/3rqqUYPZJHryczjOnbasNB?utm_source=generator" loading="lazy"></iframe>
-                <h3>sup dnya vol.1</h3>
-                <a href="https://open.spotify.com/playlist/3rqqUYPZJHryczjOnbasNB" target="_blank" class="soup-link">Слушать на Spotify</a>
-                <div class="soup-description">
-                    <p>Классический суп дня, вы его не выбирали. Жаль.</p>
+        <div class="soup-container-wrapper">
+            <div class="soup-container" id="soup-container">
+                <div class="soup-card" onclick="toggleDescription(this)">
+                    <iframe src="https://open.spotify.com/embed/playlist/3rqqUYPZJHryczjOnbasNB?utm_source=generator" loading="lazy"></iframe>
+                    <h3>sup dnya vol.1</h3>
+                    <a href="https://open.spotify.com/playlist/3rqqUYPZJHryczjOnbasNB" target="_blank" class="soup-link">Слушать на Spotify</a>
+                    <div class="soup-description">
+                        <p>Классический суп дня, вы его не выбирали. Жаль.</p>
+                    </div>
+                </div>
+                <div class="soup-card" onclick="toggleDescription(this)">
+                    <iframe src="https://open.spotify.com/embed/playlist/4B7XPUOgr0JspfHkr1h21w?utm_source=generator" loading="lazy"></iframe>
+                    <h3>sup dnya vol.2</h3>
+                    <a href="https://open.spotify.com/playlist/4B7XPUOgr0JspfHkr1h21w" target="_blank" class="soup-link">Слушать на Spotify</a>
+                    <div class="soup-description">
+                        <p>Добри, хороши, супчик, ням ням, очень миленько, вкусненько.</p>
+                    </div>
+                </div>
+                <div class="soup-card" onclick="toggleDescription(this)">
+                    <iframe src="https://open.spotify.com/embed/playlist/6qOPMMLdylVkdjT5kF0WO1?utm_source=generator" loading="lazy"></iframe>
+                    <h3>sup dnya vol.3</h3>
+                    <a href="https://open.spotify.com/playlist/6qOPMMLdylVkdjT5kF0WO1" target="_blank" class="soup-link">Слушать на Spotify</a>
+                    <div class="soup-description">
+                        <p>Малоизвестные шлягеры, дают просраться именитым титанам музыкальной индустрии.</p>
+                    </div>
+                </div>
+                <div class="soup-card" onclick="toggleDescription(this)">
+                    <iframe src="https://open.spotify.com/embed/playlist/3b2TwiB0U21T3VuyMGncSO?utm_source=generator" loading="lazy"></iframe>
+                    <h3>sup nochi</h3>
+                    <a href="https://open.spotify.com/playlist/3b2TwiB0U21T3VuyMGncSO" target="_blank" class="soup-link">Слушать на Spotify</a>
+                    <div class="soup-description">
+                        <p>Худшие люди на планете земля, в вашем супе.</p>
+                    </div>
+                </div>
+                <div class="soup-card" onclick="toggleDescription(this)">
+                    <iframe src="https://open.spotify.com/embed/playlist/69OWqO3GCvLIczeCnJGZLr?utm_source=generator" loading="lazy"></iframe>
+                    <h3>sup of war</h3>
+                    <a href="https://open.spotify.com/playlist/69OWqO3GCvLIczeCnJGZLr" target="_blank" class="soup-link">Слушать на Spotify</a>
+                    <div class="soup-description">
+                        <p>УБИВАТЬ УБИВАТЬ УБИВАТЬ УБИВАТЬ</p>
+                    </div>
+                </div>
+                <div class="soup-card" onclick="toggleDescription(this)">
+                    <iframe src="https://open.spotify.com/embed/playlist/5Dlufdhh3HlzfNbDogSHxr?utm_source=generator" loading="lazy"></iframe>
+                    <h3>sup nya</h3>
+                    <a href="https://open.spotify.com/playlist/5Dlufdhh3HlzfNbDogSHxr" target="_blank" class="soup-link">Слушать на Spotify</a>
+                    <div class="soup-description">
+                        <p>Не слушайте это, прошу.</p>
+                    </div>
+                </div>
+                <div class="soup-card" onclick="toggleDescription(this)">
+                    <iframe src="https://open.spotify.com/embed/playlist/0r5Q9ZOy3VsTpYCwQBNzID?utm_source=generator" loading="lazy"></iframe>
+                    <h3>sup govna</h3>
+                    <a href="https://open.spotify.com/playlist/0r5Q9ZOy3VsTpYCwQBNzID" target="_blank" class="soup-link">Слушать на Spotify</a>
+                    <div class="soup-description">
+                        <p>У этой музыки нет стиля, она и есть стиль.</p>
+                    </div>
+                </div>
+                <div class="soup-card" onclick="toggleDescription(this)">
+                    <iframe src="https://open.spotify.com/embed/playlist/1GWnWUtKVVgTLpfVuOSNwd?utm_source=generator" loading="lazy"></iframe>
+                    <h3>sup step</h3>
+                    <a href="https://open.spotify.com/playlist/1GWnWUtKVVgTLpfVuOSNwd" target="_blank" class="soup-link">Слушать на Spotify</a>
+                    <div class="soup-description">
+                        <p>Просто говно.</p>
+                    </div>
                 </div>
             </div>
-            <div class="soup-card" onclick="toggleDescription(this)">
-                <iframe src="https://open.spotify.com/embed/playlist/4B7XPUOgr0JspfHkr1h21w?utm_source=generator" loading="lazy"></iframe>
-                <h3>sup dnya vol.2</h3>
-                <a href="https://open.spotify.com/playlist/4B7XPUOgr0JspfHkr1h21w" target="_blank" class="soup-link">Слушать на Spotify</a>
-                <div class="soup-description">
-                    <p>Добри, хороши, супчик, ням ням, очень миленько, вкусненько.</p>
-                </div>
-            </div>
-            <div class="soup-card" onclick="toggleDescription(this)">
-                <iframe src="https://open.spotify.com/embed/playlist/6qOPMMLdylVkdjT5kF0WO1?utm_source=generator" loading="lazy"></iframe>
-                <h3>sup dnya vol.3</h3>
-                <a href="https://open.spotify.com/playlist/6qOPMMLdylVkdjT5kF0WO1" target="_blank" class="soup-link">Слушать на Spotify</a>
-                <div class="soup-description">
-                    <p>Малоизвестные шлягеры, дают просраться именитым титанам музыкальной индустрии.</p>
-                </div>
-            </div>
-            <div class="soup-card" onclick="toggleDescription(this)">
-                <iframe src="https://open.spotify.com/embed/playlist/3b2TwiB0U21T3VuyMGncSO?utm_source=generator" loading="lazy"></iframe>
-                <h3>sup nochi</h3>
-                <a href="https://open.spotify.com/playlist/3b2TwiB0U21T3VuyMGncSO" target="_blank" class="soup-link">Слушать на Spotify</a>
-                <div class="soup-description">
-                    <p>Худшие люди на планете земля, в вашем супе.</p>
-                </div>
-            </div>
-            <div class="soup-card" onclick="toggleDescription(this)">
-                <iframe src="https://open.spotify.com/embed/playlist/69OWqO3GCvLIczeCnJGZLr?utm_source=generator" loading="lazy"></iframe>
-                <h3>sup of war</h3>
-                <a href="https://open.spotify.com/playlist/69OWqO3GCvLIczeCnJGZLr" target="_blank" class="soup-link">Слушать на Spotify</a>
-                <div class="soup-description">
-                    <p>УБИВАТЬ УБИВАТЬ УБИВАТЬ УБИВАТЬ</p>
-                </div>
-            </div>
-            <div class="soup-card" onclick="toggleDescription(this)">
-                <iframe src="https://open.spotify.com/embed/playlist/5Dlufdhh3HlzfNbDogSHxr?utm_source=generator" loading="lazy"></iframe>
-                <h3>sup nya</h3>
-                <a href="https://open.spotify.com/playlist/5Dlufdhh3HlzfNbDogSHxr" target="_blank" class="soup-link">Слушать на Spotify</a>
-                <div class="soup-description">
-                    <p>Не слушайте это, прошу.</p>
-                </div>
-            </div>
-            <div class="soup-card" onclick="toggleDescription(this)">
-                <iframe src="https://open.spotify.com/embed/playlist/0r5Q9ZOy3VsTpYCwQBNzID?utm_source=generator" loading="lazy"></iframe>
-                <h3>sup govna</h3>
-                <a href="https://open.spotify.com/playlist/0r5Q9ZOy3VsTpYCwQBNzID" target="_blank" class="soup-link">Слушать на Spotify</a>
-                <div class="soup-description">
-                    <p>У этой музыки нет стиля, она и есть стиль.</p>
-                </div>
-            </div>
-            <div class="soup-card" onclick="toggleDescription(this)">
-                <iframe src="https://open.spotify.com/embed/playlist/1GWnWUtKVVgTLpfVuOSNwd?utm_source=generator" loading="lazy"></iframe>
-                <h3>sup step</h3>
-                <a href="https://open.spotify.com/playlist/1GWnWUtKVVgTLpfVuOSNwd" target="_blank" class="soup-link">Слушать на Spotify</a>
-                <div class="soup-description">
-                    <p>Просто говно.</p>
-                </div>
+            <div class="scroll-buttons">
+                <button id="scroll-left" class="scroll-btn">&#8249;</button> <!-- Левая кнопка -->
+                <button id="scroll-right" class="scroll-btn">&#8250;</button> <!-- Правая кнопка -->
             </div>
         </div>
-    </section>    
+    </section>
 
     <!-- Секция "Тест Тейлор Свифт" -->
     <section id="swift-test" class="section">
@@ -1122,74 +1188,114 @@
     </div>
 
     <!-- Скрипты -->
-    <script>
-        // Открытие изображения в модальном окне
-        var modal = document.getElementById('modal');
-        var modalImg = document.getElementById('modal-img');
-        var captionText = document.getElementById('modal-caption');
+    <<script>
+    // Открытие изображения в модальном окне
+    var modal = document.getElementById('modal');
+    var modalImg = document.getElementById('modal-img');
+    var captionText = document.getElementById('modal-caption');
 
-        var images = document.querySelectorAll('.gallery img, #about .photos img, #egor img');
-        images.forEach(function(img) {
-            img.onclick = function() {
-                modal.style.display = "block";
-                modalImg.src = this.src;
-                captionText.innerHTML = this.alt;
-            }
-        });
+    var images = document.querySelectorAll('.gallery img, #about .photos img, #egor img');
+    images.forEach(function(img) {
+        img.onclick = function() {
+            modal.style.display = "block";
+            modalImg.src = this.src;
+            captionText.innerHTML = this.alt;
+        }
+    });
 
-        // Закрытие модального окна
-        var span = document.getElementsByClassName('close')[0];
-        span.onclick = function() {
+    // Закрытие модального окна
+    var span = document.getElementsByClassName('close')[0];
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    // Закрытие модального окна при клике вне изображения
+    window.onclick = function(event) {
+        if (event.target == modal) {
             modal.style.display = "none";
         }
+    }
 
-        // Закрытие модального окна при клике вне изображения
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
+    // Переключатель тем
+    const themeSwitcher = document.getElementById('theme-switcher');
+    const body = document.body;
+
+    const themes = ['light', 'dark', 'green', 'yellow', 'pink'];
+    let currentTheme = 0;
+
+    themeSwitcher.addEventListener('click', () => {
+        currentTheme = (currentTheme + 1) % themes.length;
+        body.className = '';
+        if (themes[currentTheme] === 'light') {
+            // Удалить все классы тем
+            body.classList.remove('theme-dark', 'theme-green', 'theme-yellow', 'theme-pink');
+        } else {
+            body.classList.add(`theme-${themes[currentTheme]}`);
         }
+    });
 
-        // Переключатель тем
-        const themeSwitcher = document.getElementById('theme-switcher');
-        const body = document.body;
+    // Сохранение выбранной темы в localStorage
+    document.addEventListener('DOMContentLoaded', () => {
+        // Прокрутка супов
+        const soupContainer = document.getElementById('soup-container');
+        const scrollLeftBtn = document.getElementById('scroll-left');
+        const scrollRightBtn = document.getElementById('scroll-right');
 
-        const themes = ['light', 'dark', 'green', 'yellow', 'pink'];
-        let currentTheme = 0;
+        // Размер сдвига при прокрутке
+        const scrollAmount = 300;
 
-        themeSwitcher.addEventListener('click', () => {
-            currentTheme = (currentTheme + 1) % themes.length;
-            body.className = '';
-            if (themes[currentTheme] === 'light') {
-                // Удалить все классы тем
-                body.classList.remove('theme-dark', 'theme-green', 'theme-yellow', 'theme-pink');
-            } else {
-                body.classList.add(`theme-${themes[currentTheme]}`);
-            }
-        });
-
-        // Сохранение выбранной темы в localStorage
-        document.addEventListener('DOMContentLoaded', () => {
-            const soupCards = document.querySelectorAll('.soup-card');
-
-            const colorMap = {
-                'https://open.spotify.com/embed/playlist/3rqqUYPZJHryczjOnbasNB?utm_source=generator': '#7e7e7e',
-                'https://open.spotify.com/embed/playlist/4B7XPUOgr0JspfHkr1h21w?utm_source=generator': '#ff4b4b',
-                'https://open.spotify.com/embed/playlist/6qOPMMLdylVkdjT5kF0WO1?utm_source=generator': '#5a9cd4',
-                'https://open.spotify.com/embed/playlist/3b2TwiB0U21T3VuyMGncSO?utm_source=generator': '#7e7e7e',
-                'https://open.spotify.com/embed/playlist/69OWqO3GCvLIczeCnJGZLr?utm_source=generator': '#ff9933',
-                'https://open.spotify.com/embed/playlist/5Dlufdhh3HlzfNbDogSHxr?utm_source=generator': '#d36adc',
-                'https://open.spotify.com/embed/playlist/0r5Q9ZOy3VsTpYCwQBNzID?utm_source=generator': '#b08d57',
-                'https://open.spotify.com/embed/playlist/1GWnWUtKVVgTLpfVuOSNwd?utm_source=generator': '#3399ff'
-            };
-
-            soupCards.forEach((card) => {
-                const iframe = card.querySelector('iframe');
-                if (colorMap[iframe.src]) {
-                    card.style.borderColor = colorMap[iframe.src]; // Устанавливаем цвет рамки
-                }
+        // Прокрутка влево
+        scrollLeftBtn.addEventListener('click', () => {
+            soupContainer.scrollBy({
+                left: -scrollAmount, // Прокручиваем на 300 пикселей влево
+                behavior: 'smooth'
             });
         });
+
+        // Прокрутка вправо
+        scrollRightBtn.addEventListener('click', () => {
+            soupContainer.scrollBy({
+                left: scrollAmount, // Прокручиваем на 300 пикселей вправо
+                behavior: 'smooth'
+            });
+        });
+
+        // Изменение цвета рамки карточек супов
+        const soupCards = document.querySelectorAll('.soup-card');
+        const colorMap = {
+            'https://open.spotify.com/embed/playlist/3rqqUYPZJHryczjOnbasNB?utm_source=generator': '#7e7e7e',
+            'https://open.spotify.com/embed/playlist/4B7XPUOgr0JspfHkr1h21w?utm_source=generator': '#ff4b4b',
+            'https://open.spotify.com/embed/playlist/6qOPMMLdylVkdjT5kF0WO1?utm_source=generator': '#5a9cd4',
+            'https://open.spotify.com/embed/playlist/3b2TwiB0U21T3VuyMGncSO?utm_source=generator': '#7e7e7e',
+            'https://open.spotify.com/embed/playlist/69OWqO3GCvLIczeCnJGZLr?utm_source=generator': '#ff9933',
+            'https://open.spotify.com/embed/playlist/5Dlufdhh3HlzfNbDogSHxr?utm_source=generator': '#d36adc',
+            'https://open.spotify.com/embed/playlist/0r5Q9ZOy3VsTpYCwQBNzID?utm_source=generator': '#b08d57',
+            'https://open.spotify.com/embed/playlist/1GWnWUtKVVgTLpfVuOSNwd?utm_source=generator': '#3399ff'
+        };
+
+        soupCards.forEach((card) => {
+            const iframe = card.querySelector('iframe');
+            if (colorMap[iframe.src]) {
+                card.style.borderColor = colorMap[iframe.src]; // Устанавливаем цвет рамки
+            }
+        });
+    });
+
+    // Функция для плавного перехода к секции
+    function scrollToSection(sectionId) {
+        document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Тест на знание Тейлор Свифт
+    // Код для теста, пропущен для краткости
+
+    // Функция для раскрытия описания в карточке супа
+    function toggleDescription(card) {
+        card.classList.toggle('open'); // Открывает или закрывает описание для текущей карточки
+    }
+
+
+
 
 
         // Функция для плавного перехода к секции
