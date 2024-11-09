@@ -3,9 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мой Крутой Сайт</title>
+    <title>Олек - Мой Крутой Сайт</title>
     <link rel="icon" href="pics/avatar.jpg" type="image/jpeg">
     <style>
+        /* CSS-переменные для тем */
+        :root {
+            --background-color: #ffffff;
+            --text-color: #222222;
+            --navbar-color: #1a1a1a;
+            --navbar-text-color: #f0f0f0;
+            --section-background: #f9f9f9;
+            --link-color: #1a73e8;
+            --footer-background: #1a1a1a;
+            --footer-text-color: #f0f0f0;
+            --button-background: rgba(255, 255, 255, 0.8);
+            --button-hover-background: rgba(255, 255, 255, 1);
+        }
+
+        /* Темы */
+        .theme-dark {
+            --background-color: #121212;
+            --text-color: #e0e0e0;
+            --navbar-color: #1f1f1f;
+            --navbar-text-color: #e0e0e0;
+            --section-background: #1e1e1e;
+            --link-color: #bb86fc;
+            --footer-background: #1f1f1f;
+            --footer-text-color: #e0e0e0;
+            --button-background: rgba(0, 0, 0, 0.6);
+            --button-hover-background: rgba(0, 0, 0, 0.8);
+        }
+
+        .theme-green {
+            --background-color: #e8f5e9;
+            --text-color: #1b5e20;
+            --navbar-color: #388e3c;
+            --navbar-text-color: #ffffff;
+            --section-background: #c8e6c9;
+            --link-color: #2e7d32;
+            --footer-background: #388e3c;
+            --footer-text-color: #ffffff;
+            --button-background: rgba(56, 142, 60, 0.6);
+            --button-hover-background: rgba(56, 142, 60, 0.8);
+        }
+
+        .theme-yellow {
+            --background-color: #fffde7;
+            --text-color: #f57f17;
+            --navbar-color: #fbc02d;
+            --navbar-text-color: #333333;
+            --section-background: #fff9c4;
+            --link-color: #f57f17;
+            --footer-background: #fbc02d;
+            --footer-text-color: #333333;
+            --button-background: rgba(252, 192, 45, 0.6);
+            --button-hover-background: rgba(252, 192, 45, 0.8);
+        }
+
+        .theme-pink {
+            --background-color: #fce4ec;
+            --text-color: #880e4f;
+            --navbar-color: #ec407a;
+            --navbar-text-color: #ffffff;
+            --section-background: #f8bbd0;
+            --link-color: #c2185b;
+            --footer-background: #ec407a;
+            --footer-text-color: #ffffff;
+            --button-background: rgba(236, 64, 122, 0.6);
+            --button-hover-background: rgba(236, 64, 122, 0.8);
+        }
+
         /* Сброс стилей */
         * {
             margin: 0;
@@ -15,117 +82,159 @@
 
         body {
             font-family: 'Arial', sans-serif;
-            background: #ffffff;
-            color: #222;
+            background: var(--background-color);
+            color: var(--text-color);
             line-height: 1.6;
             font-size: 18px;
             overflow-x: hidden;
+            transition: background 0.3s, color 0.3s;
         }
 
         /* Навигация */
         .navbar {
             display: flex;
             justify-content: center;
-            background: #1a1a1a;
-            padding: 1rem;
+            background: var(--navbar-color);
+            padding: 0.5rem 1rem;
             position: fixed;
             width: 100%;
             top: 0;
             z-index: 1000;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: background 0.3s;
         }
 
         .navbar a {
-            color: #f0f0f0;
-            padding: 0.75rem 1.5rem;
+            color: var(--navbar-text-color);
+            padding: 0.5rem 1rem;
             text-decoration: none;
             transition: background 0.3s, color 0.3s;
             font-weight: bold;
+            font-size: 1em;
+            position: relative;
         }
 
-        .navbar a:hover {
-            background: #333;
-            color: #fff;
-            border-radius: 4px;
+        .navbar a::after {
+            content: '';
+            display: block;
+            width: 0;
+            height: 2px;
+            background: var(--link-color);
+            transition: width 0.3s;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+        }
+
+        .navbar a:hover::after {
+            width: 100%;
+        }
+
+        /* Темный режим кнопка */
+        .theme-switcher {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--button-background);
+            border: none;
+            border-radius: 50%;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 1.5em;
+            transition: background 0.3s, transform 0.3s;
+            z-index: 1001;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .theme-switcher:hover {
+            background: var(--button-hover-background);
+            transform: rotate(20deg);
         }
 
         /* Секции */
         .section {
-            padding: 80px 20px 60px; /* Отступ сверху для навбара */
+            padding: 80px 20px 40px; /* Уменьшенные отступы */
             min-height: 100vh;
             animation: fadeIn 1s ease-in;
+            background: var(--section-background);
+            transition: background 0.3s;
         }
 
         #home {
             background: url('pics/background.jpg') no-repeat center center/cover;
-            color: #fff;
+            color: #ffffff;
             text-align: center;
             display: flex;
             flex-direction: column;
             justify-content: center;
+            position: relative;
             box-shadow: inset 0 0 0 1000px rgba(0,0,0,0.3);
+            animation: slideIn 1s ease-out;
         }
 
         #home h1 {
             text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+            font-size: 2.5em;
+            animation: fadeInDown 1s ease-out;
         }
 
-        #about, #gallery, #contact, #egor, #soups {
-            background: #f9f9f9;
-            color: #222;
+        #home p {
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+            font-size: 1.2em;
+            animation: fadeInUp 1s ease-out;
         }
 
         /* Заголовки */
         h1, h2 {
             margin-bottom: 20px;
             font-family: 'Verdana', sans-serif;
-        }
-
-        h1 {
-            font-size: 3em;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            animation: fadeIn 1s ease-out;
         }
 
         h2 {
-            font-size: 2.5em;
+            font-size: 2em;
             border-bottom: 2px solid #ddd;
             display: inline-block;
-            padding-bottom: 10px;
-            margin-bottom: 30px;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
         }
 
         /* Аватарка */
         .avatar {
-            width: 150px;
-            height: 150px;
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
-            margin: 20px auto;
-            border: 5px solid #1a1a1a;
-            transition: transform 0.3s;
+            margin: 10px auto;
+            border: 3px solid var(--navbar-color);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
         }
 
         .avatar:hover {
             transform: scale(1.1);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
         }
 
         /* Галерея */
         .gallery {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-            padding: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            padding: 10px;
+            animation: fadeIn 1s ease-out;
         }
 
         .gallery img {
             width: 100%;
             border-radius: 8px;
-            transition: transform 0.3s, opacity 0.3s;
+            transition: transform 0.3s, opacity 0.3s, box-shadow 0.3s;
             cursor: pointer;
         }
 
         .gallery img:hover {
             transform: scale(1.05);
             opacity: 0.8;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
         }
 
         /* Модальное окно для изображений */
@@ -140,17 +249,26 @@
             height: 100%;
             overflow: auto;
             background-color: rgba(0,0,0,0.9);
+            animation: fadeIn 0.5s;
         }
 
         .modal-content {
             margin: auto;
             display: block;
             width: 80%;
-            max-width: 900px;
+            max-width: 700px;
+            border-radius: 10px;
+            animation: zoom 0.6s;
         }
 
-        .modal-content, .modal-caption {
-            animation: zoom 0.6s;
+        .modal-caption {
+            margin: auto;
+            display: block;
+            width: 80%;
+            max-width: 700px;
+            text-align: center;
+            color: #ccc;
+            padding: 10px 0;
         }
 
         @keyframes zoom {
@@ -158,12 +276,50 @@
             to {transform:scale(1)}
         }
 
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
         .close {
             position: absolute;
-            top: 30px;
+            top: 20px;
             right: 35px;
-            color: #fff;
-            font-size: 40px;
+            color: #ffffff;
+            font-size: 35px;
             font-weight: bold;
             transition: color 0.3s;
             cursor: pointer;
@@ -176,12 +332,127 @@
             cursor: pointer;
         }
 
-        /* Контент страницы Егор Крид */
+        /* Секция "Обо мне" */
+        #about {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            animation: fadeIn 1s ease-out;
+        }
+
+        #about .photos {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        #about .photos img {
+            width: 100px;
+            height: 100px;
+            border-radius: 10px;
+            object-fit: cover;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        #about .photos img:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        #about .links {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
+            animation: fadeIn 1s ease-out;
+        }
+
+        #about .links a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--link-color);
+            text-decoration: none;
+            transition: color 0.3s, transform 0.3s;
+            font-size: 1em;
+        }
+
+        #about .links a:hover {
+            color: darken(var(--link-color), 10%);
+            transform: scale(1.05);
+        }
+
+        #about .links img {
+            width: 40px;
+            height: 40px;
+            transition: transform 0.3s;
+        }
+
+        #about .links img:hover {
+            transform: rotate(20deg);
+        }
+
+        /* Секция "Супы дня" */
+        #soups {
+            text-align: center;
+            animation: fadeIn 1s ease-out;
+        }
+
+        .soup-playlist {
+            margin-bottom: 20px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 1s forwards;
+            animation-delay: 0.3s;
+        }
+
+        .soup-playlist:nth-child(odd) {
+            animation-delay: 0.5s;
+        }
+
+        .soup-playlist iframe {
+            width: 100%;
+            max-width: 600px;
+            border: none;
+            border-radius: 12px;
+            height: 352px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .soup-playlist iframe:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .soup-playlist h3 {
+            margin-top: 10px;
+            font-size: 1.2em;
+            animation: fadeIn 1s ease-out;
+        }
+
+        .soup-playlist a {
+            color: var(--link-color);
+            text-decoration: none;
+            transition: color 0.3s;
+            font-size: 1em;
+        }
+
+        .soup-playlist a:hover {
+            color: darken(var(--link-color), 10%);
+        }
+
+        /* Секция "Егор Крид" */
         #egor {
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
+            animation: fadeIn 1s ease-out;
         }
 
         #egor img {
@@ -189,81 +460,110 @@
             border-radius: 10px;
             margin-bottom: 20px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        #egor img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
         }
 
         #egor p {
             max-width: 800px;
             margin-bottom: 20px;
             line-height: 1.8;
+            animation: fadeIn 1s ease-out;
         }
 
-        /* Секция "Супы дня" */
-        #soups {
-            text-align: center;
+        /* Секция "Галерея" */
+        #gallery {
+            animation: fadeIn 1s ease-out;
         }
 
-        .soup-playlist {
-            margin-bottom: 40px;
+        /* Секция "Контакты" */
+        #contact {
+            animation: fadeIn 1s ease-out;
         }
 
-        .soup-playlist iframe {
-            width: 80%;
-            max-width: 700px;
-            border: none;
-            border-radius: 12px;
-            height: 352px;
+        #contact p {
+            margin-bottom: 10px;
+            animation: fadeIn 1s ease-out;
         }
 
-        .soup-playlist h3 {
-            margin-top: 20px;
-            font-size: 1.5em;
-        }
-
-        .soup-playlist a {
-            color: #1a73e8;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-
-        .soup-playlist a:hover {
-            color: #004ba0;
-        }
-
-        /* Список контактов */
         #contact ul {
             list-style: none;
             padding: 0;
-        }
-
-        #contact ul li {
-            margin: 10px 0;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 10px;
+            animation: fadeIn 1s ease-out;
         }
 
         #contact ul li a {
-            color: #1a73e8;
+            color: var(--link-color);
             text-decoration: none;
-            transition: color 0.3s;
+            transition: color 0.3s, transform 0.3s;
+            font-size: 1.2em;
         }
 
         #contact ul li a:hover {
-            color: #004ba0;
+            color: darken(var(--link-color), 10%);
+            transform: scale(1.05);
         }
 
         /* Футер */
         footer {
             text-align: center;
-            padding: 20px;
-            background: #1a1a1a;
-            color: #f0f0f0;
+            padding: 10px;
+            background: var(--footer-background);
+            color: var(--footer-text-color);
             position: relative;
             bottom: 0;
             width: 100%;
+            transition: background 0.3s, color 0.3s;
+            font-size: 0.9em;
+            animation: fadeIn 1s ease-out;
         }
 
         /* Анимация */
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
         /* Плавная прокрутка */
@@ -279,11 +579,11 @@
         /* Адаптивность */
         @media (max-width: 768px) {
             h1 {
-                font-size: 2.5em;
+                font-size: 2em;
             }
 
             h2 {
-                font-size: 2em;
+                font-size: 1.5em;
             }
 
             body {
@@ -291,12 +591,26 @@
             }
 
             .navbar a {
-                padding: 0.5rem 1rem;
+                padding: 0.5rem 0.75rem;
                 font-size: 0.9em;
             }
 
             .soup-playlist iframe {
-                width: 100%;
+                max-width: 100%;
+            }
+
+            #about .photos img {
+                width: 80px;
+                height: 80px;
+            }
+
+            #about .links img {
+                width: 30px;
+                height: 30px;
+            }
+
+            .soup-playlist h3 {
+                font-size: 1em;
             }
         }
     </style>
@@ -313,19 +627,36 @@
         <a href="#contact">Контакты</a>
     </nav>
 
+    <!-- Переключатель тем -->
+    <button class="theme-switcher" id="theme-switcher" title="Переключить тему">🌈</button>
+
     <div class="spacer"></div>
 
     <!-- Главная секция -->
     <section id="home" class="section">
-        <img src="pics/avatar.jpg" alt="Аватарка" class="avatar">
-        <h1>Добро пожаловать на мой сайт!</h1>
-        <p>Это мой крутой одностраничный сайт с анимацией и красивым интерфейсом.</p>
+        <img src="pics/avatar.jpg" alt="Аватарка" class="avatar" onclick="scrollToSection('about')">
+        <h1>Привет! Я Олек</h1>
+        <p>Мне 9 лет. Я увлекаюсь постройками парков развлечений в Roblox и строительством домов в Minecraft 1.7.10.</p>
     </section>
 
     <!-- Секция "Обо мне" -->
     <section id="about" class="section">
         <h2>Обо мне</h2>
-        <p>Привет! Я Олек, мне 9 лет. Я увлекаюсь постройкой парков развлечений в Roblox и строительством домов в Minecraft 1.7.10. На этом сайте вы можете узнать обо мне больше и посмотреть мои работы.</p>
+        <div class="photos">
+            <img src="pics/about1.jpg" alt="Олек Фото 1">
+            <img src="pics/about2.jpg" alt="Олек Фото 2">
+            <img src="pics/about3.jpg" alt="Олек Фото 3">
+        </div>
+        <div class="links">
+            <a href="https://discord.gg/JMAKvgNQ2r" target="_blank">
+                <img src="pics/blup.png" alt="Discord Блуп">
+                Присоединяйся к моему Discord
+            </a>
+            <a href="https://isaacdeve.github.io/" target="_blank">
+                <img src="pics/arsen.jpg" alt="Арсен">
+                Сайт моего друга Арсена
+            </a>
+        </div>
     </section>
 
     <!-- Секция "Егор Крид" -->
@@ -341,43 +672,43 @@
     <section id="soups" class="section">
         <h2>Супы дня</h2>
         <div class="soup-playlist">
-            <iframe src="https://open.spotify.com/embed/playlist/3rqqUYPZJHryczjOnbasNB?utm_source=generator" loading="lazy"></iframe>
+            <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/3rqqUYPZJHryczjOnbasNB?utm_source=generator" width="100%" height="352" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
             <h3>Плейлист 1</h3>
             <a href="https://open.spotify.com/playlist/3rqqUYPZJHryczjOnbasNB" target="_blank">Слушать на Spotify</a>
         </div>
         <div class="soup-playlist">
-            <iframe src="https://open.spotify.com/embed/playlist/4B7XPUOgr0JspfHkr1h21w?utm_source=generator" loading="lazy"></iframe>
+            <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/4B7XPUOgr0JspfHkr1h21w?utm_source=generator" width="100%" height="352" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
             <h3>Плейлист 2</h3>
             <a href="https://open.spotify.com/playlist/4B7XPUOgr0JspfHkr1h21w" target="_blank">Слушать на Spotify</a>
         </div>
         <div class="soup-playlist">
-            <iframe src="https://open.spotify.com/embed/playlist/6qOPMMLdylVkdjT5kF0WO1?utm_source=generator" loading="lazy"></iframe>
+            <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/6qOPMMLdylVkdjT5kF0WO1?utm_source=generator" width="100%" height="352" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
             <h3>Плейлист 3</h3>
             <a href="https://open.spotify.com/playlist/6qOPMMLdylVkdjT5kF0WO1" target="_blank">Слушать на Spotify</a>
         </div>
         <div class="soup-playlist">
-            <iframe src="https://open.spotify.com/embed/playlist/0r5Q9ZOy3VsTpYCwQBNzID?utm_source=generator" loading="lazy"></iframe>
+            <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/0r5Q9ZOy3VsTpYCwQBNzID?utm_source=generator" width="100%" height="352" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
             <h3>Плейлист 4</h3>
             <a href="https://open.spotify.com/playlist/0r5Q9ZOy3VsTpYCwQBNzID" target="_blank">Слушать на Spotify</a>
         </div>
         <div class="soup-playlist">
-            <iframe src="https://open.spotify.com/embed/playlist/5Dlufdhh3HlzfNbDogSHxr?utm_source=generator" loading="lazy"></iframe>
+            <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/5Dlufdhh3HlzfNbDogSHxr?utm_source=generator" width="100%" height="352" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
             <h3>Плейлист 5</h3>
             <a href="https://open.spotify.com/playlist/5Dlufdhh3HlzfNbDogSHxr" target="_blank">Слушать на Spotify</a>
         </div>
         <div class="soup-playlist">
-            <iframe src="https://open.spotify.com/embed/playlist/69OWqO3GCvLIczeCnJGZLr?utm_source=generator" loading="lazy"></iframe>
+            <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/69OWqO3GCvLIczeCnJGZLr?utm_source=generator" width="100%" height="352" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
             <h3>Плейлист 6</h3>
             <a href="https://open.spotify.com/playlist/69OWqO3GCvLIczeCnJGZLr" target="_blank">Слушать на Spotify</a>
         </div>
         <div class="soup-playlist">
-            <iframe src="https://open.spotify.com/embed/playlist/1GWnWUtKVVgTLpfVuOSNwd?utm_source=generator" loading="lazy"></iframe>
+            <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/1GWnWUtKVVgTLpfVuOSNwd?utm_source=generator" width="100%" height="352" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
             <h3>Плейлист 7</h3>
             <a href="https://open.spotify.com/playlist/1GWnWUtKVVgTLpfVuOSNwd" target="_blank">Слушать на Spotify</a>
         </div>
     </section>
 
-    <!-- Галерея -->
+    <!-- Секция "Галерея" -->
     <section id="gallery" class="section">
         <h2>Галерея</h2>
         <div class="gallery">
@@ -389,7 +720,7 @@
         </div>
     </section>
 
-    <!-- Контакты -->
+    <!-- Секция "Контакты" -->
     <section id="contact" class="section">
         <h2>Контакты</h2>
         <p>Свяжитесь со мной по электронной почте: <a href="mailto:vladimir@putin.ru">vladimir@putin.ru</a></p>
@@ -404,7 +735,7 @@
     <div id="modal" class="modal">
         <span class="close">&times;</span>
         <img class="modal-content" id="modal-img">
-        <div id="modal-caption"></div>
+        <div id="modal-caption" class="modal-caption"></div>
     </div>
 
     <!-- Скрипты -->
@@ -414,7 +745,7 @@
         var modalImg = document.getElementById('modal-img');
         var captionText = document.getElementById('modal-caption');
 
-        var images = document.querySelectorAll('.gallery img');
+        var images = document.querySelectorAll('.gallery img, #about .photos img, #egor img');
         images.forEach(function(img) {
             img.onclick = function() {
                 modal.style.display = "block";
@@ -427,6 +758,56 @@
         var span = document.getElementsByClassName('close')[0];
         span.onclick = function() {
             modal.style.display = "none";
+        }
+
+        // Закрытие модального окна при клике вне изображения
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        // Переключатель тем
+        const themeSwitcher = document.getElementById('theme-switcher');
+        const body = document.body;
+
+        const themes = ['light', 'dark', 'green', 'yellow', 'pink'];
+        let currentTheme = 0;
+
+        themeSwitcher.addEventListener('click', () => {
+            currentTheme = (currentTheme + 1) % themes.length;
+            body.className = '';
+            if (themes[currentTheme] === 'light') {
+                // Удалить все классы тем
+                body.classList.remove('theme-dark', 'theme-green', 'theme-yellow', 'theme-pink');
+            } else {
+                body.classList.add(`theme-${themes[currentTheme]}`);
+            }
+        });
+
+        // Сохранение выбранной темы в localStorage
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                const index = themes.indexOf(savedTheme);
+                if (index !== -1) {
+                    currentTheme = index;
+                    if (savedTheme !== 'light') {
+                        body.classList.add(`theme-${savedTheme}`);
+                    }
+                }
+            }
+
+            // Обновление локального хранилища при переключении темы
+            themeSwitcher.addEventListener('click', () => {
+                const selectedTheme = themes[currentTheme];
+                localStorage.setItem('theme', selectedTheme);
+            });
+        });
+
+        // Функция для плавного перехода к секции
+        function scrollToSection(sectionId) {
+            document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
         }
     </script>
 </body>
