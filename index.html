@@ -383,7 +383,7 @@
         }
 
         #about .links a:hover {
-            color: darken(var(--link-color), 10%);
+            color: var(--link-color);
             transform: scale(1.05);
         }
 
@@ -443,7 +443,7 @@
         }
 
         .soup-playlist a:hover {
-            color: darken(var(--link-color), 10%);
+            color: #004ba0;
         }
 
         /* Секция "Егор Крид" */
@@ -509,7 +509,7 @@
         }
 
         #contact ul li a:hover {
-            color: darken(var(--link-color), 10%);
+            color: #004ba0;
             transform: scale(1.05);
         }
 
@@ -527,7 +527,104 @@
             animation: fadeIn 1s ease-out;
         }
 
-        /* Анимация */
+        /* Секция "Тест Тейлор Свифт" */
+        #swift-test {
+            animation: fadeIn 1s ease-out;
+        }
+
+        #swift-test h2 {
+            margin-bottom: 20px;
+        }
+
+        .quiz-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--section-background);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: background 0.3s;
+        }
+
+        .quiz-question {
+            margin-bottom: 20px;
+            animation: fadeIn 1s ease-out;
+        }
+
+        .quiz-options {
+            list-style: none;
+            padding: 0;
+        }
+
+        .quiz-options li {
+            margin-bottom: 10px;
+        }
+
+        .quiz-options input {
+            margin-right: 10px;
+        }
+
+        .quiz-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .quiz-navigation button {
+            padding: 10px 20px;
+            border: none;
+            background: var(--link-color);
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.3s;
+        }
+
+        .quiz-navigation button:hover {
+            background: #004ba0;
+            transform: scale(1.05);
+        }
+
+        .quiz-progress {
+            margin-bottom: 20px;
+            height: 20px;
+            background: #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .quiz-progress-bar {
+            height: 100%;
+            width: 0%;
+            background: var(--link-color);
+            transition: width 0.3s;
+        }
+
+        .quiz-result {
+            text-align: center;
+            animation: fadeIn 1s ease-out;
+        }
+
+        .quiz-result h3 {
+            margin-bottom: 20px;
+        }
+
+        .quiz-result p {
+            margin-bottom: 10px;
+        }
+
+        .certificate {
+            margin-top: 20px;
+            padding: 20px;
+            border: 2px solid var(--link-color);
+            border-radius: 10px;
+            background: #f0f0f0;
+            animation: fadeIn 1s ease-out;
+        }
+
+        /* Секция "Тест Тейлор Свифт" конец */
+
+        /* Анимации */
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -612,6 +709,19 @@
             .soup-playlist h3 {
                 font-size: 1em;
             }
+
+            .quiz-container {
+                padding: 10px;
+            }
+
+            .quiz-navigation button {
+                padding: 8px 16px;
+                font-size: 0.9em;
+            }
+
+            .certificate {
+                padding: 10px;
+            }
         }
     </style>
 </head>
@@ -623,6 +733,7 @@
         <a href="#about">Обо мне</a>
         <a href="#egor">Егор Крид</a>
         <a href="#soups">Супы дня</a>
+        <a href="#swift-test">Тест Тейлор Свифт</a>
         <a href="#gallery">Галерея</a>
         <a href="#contact">Контакты</a>
     </nav>
@@ -707,6 +818,35 @@
             <a href="https://open.spotify.com/playlist/1GWnWUtKVVgTLpfVuOSNwd" target="_blank">Слушать на Spotify</a>
         </div>
     </section>
+
+    <!-- Секция "Тест Тейлор Свифт" -->
+    <section id="swift-test" class="section">
+        <h2>Тест на знание Тейлор Свифт</h2>
+        <div class="quiz-container">
+            <div id="quiz">
+                <div class="quiz-question" id="question">Вопрос будет загружен...</div>
+                <ul class="quiz-options" id="options">
+                    <!-- Опции будут загружены здесь -->
+                </ul>
+                <div class="quiz-navigation">
+                    <button id="prev-btn" disabled>Назад</button>
+                    <button id="next-btn">Вперед</button>
+                </div>
+                <div class="quiz-progress">
+                    <div class="quiz-progress-bar" id="progress-bar"></div>
+                </div>
+            </div>
+            <div id="result" class="quiz-result" style="display:none;">
+                <h3>Ваш результат: <span id="score"></span>/10</h3>
+                <p id="message"></p>
+                <div id="certificate" class="certificate" style="display:none;">
+                    🎉 Поздравляем! Вы получили сертификат за отличные знания о Тейлор Свифт! 🎉
+                </div>
+                <button id="restart-btn">Пройти снова</button>
+            </div>
+        </div>
+    </section>
+    <!-- Секция "Тест Тейлор Свифт" конец -->
 
     <!-- Секция "Галерея" -->
     <section id="gallery" class="section">
@@ -809,6 +949,158 @@
         function scrollToSection(sectionId) {
             document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
         }
+
+        // Тест на знание Тейлор Свифт
+        const quizData = [
+            {
+                question: "Где живет Тейлор Свифт?",
+                options: ["Канада", "США", "Великобритания", "Австралия"],
+                answer: 1 // Индекс правильного ответа (США)
+            },
+            {
+                question: "Ты на r/TaylorSwift?",
+                options: ["Да", "Нет"],
+                answer: 0 // Да
+            },
+            {
+                question: "Ты фанат Тейлор Свифт?",
+                options: ["Да", "Нет"],
+                answer: 0 // Да
+            },
+            {
+                question: "Что выберешь: Родина или Тейлор Свифт?",
+                options: ["Родина", "Тейлор Свифт"],
+                answer: 1 // Тейлор Свифт
+            },
+            {
+                question: "Любимая порода кошек Тейлор Свифт?",
+                options: ["Сиамская", "Британская короткошерстная", "Шотландская вислоухая", "Мейн-кун"],
+                answer: 2 // Шотландская вислоухая
+            },
+            {
+                question: "Год рождения Тейлор Свифт?",
+                options: ["1988", "1989", "1990", "1991"],
+                answer: 1 // 1989
+            },
+            {
+                question: "Какой альбом Тейлор Свифт лучше всего продавался в первую неделю в США?",
+                options: ["Reputation", "1989", "Lover", "Fearless"],
+                answer: 1 // "1989"
+            },
+            {
+                question: "Тейлор Свифт — это...",
+                options: ["Парень", "Девушка", "Группа"],
+                answer: 1 // Девушка
+            },
+            {
+                question: "Ты поддерживаешь войну в Украине?",
+                options: ["Да", "Нет"],
+                answer: 1 // Нет
+            },
+            {
+                question: "Подписан ли ты на TikTok Тейлор Свифт?",
+                options: ["Да", "Нет"],
+                answer: 0 // Да
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+
+        const quiz = document.getElementById('quiz');
+        const questionEl = document.getElementById('question');
+        const optionsEl = document.getElementById('options');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const progressBar = document.getElementById('progress-bar');
+        const resultEl = document.getElementById('result');
+        const scoreEl = document.getElementById('score');
+        const messageEl = document.getElementById('message');
+        const certificateEl = document.getElementById('certificate');
+        const restartBtn = document.getElementById('restart-btn');
+
+        function loadQuestion() {
+            const currentData = quizData[currentQuestion];
+            questionEl.innerText = currentData.question;
+            optionsEl.innerHTML = '';
+            currentData.options.forEach((option, index) => {
+                const li = document.createElement('li');
+                const label = document.createElement('label');
+                const input = document.createElement('input');
+                input.type = 'radio';
+                input.name = 'option';
+                input.value = index;
+                if (index === currentData.answer) {
+                    input.dataset.correct = 'true';
+                }
+                label.appendChild(input);
+                label.appendChild(document.createTextNode(option));
+                li.appendChild(label);
+                optionsEl.appendChild(li);
+            });
+
+            // Обновление состояния кнопок
+            prevBtn.disabled = currentQuestion === 0;
+            nextBtn.innerText = currentQuestion === quizData.length - 1 ? 'Завершить' : 'Вперед';
+
+            // Обновление прогресса
+            const progressPercent = ((currentQuestion) / quizData.length) * 100;
+            progressBar.style.width = progressPercent + '%';
+        }
+
+        function showResult() {
+            quiz.style.display = 'none';
+            resultEl.style.display = 'block';
+            scoreEl.innerText = score;
+            const rating = Math.round((score / quizData.length) * 5);
+            if (rating > 2) {
+                messageEl.innerText = "Отлично! Вы хорошо знаете Тейлор Свифт.";
+                certificateEl.style.display = 'block';
+            } else {
+                messageEl.innerText = "Неплохо, но есть над чем работать.";
+                certificateEl.style.display = 'none';
+            }
+            progressBar.style.width = '100%';
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            quiz.style.display = 'block';
+            resultEl.style.display = 'none';
+            loadQuestion();
+        }
+
+        prevBtn.addEventListener('click', () => {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                loadQuestion();
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            const selectedOption = document.querySelector('input[name="option"]:checked');
+            if (selectedOption) {
+                if (selectedOption.dataset.correct === 'true') {
+                    score += 1;
+                }
+                currentQuestion++;
+                if (currentQuestion < quizData.length) {
+                    loadQuestion();
+                } else {
+                    showResult();
+                }
+            } else {
+                alert("Пожалуйста, выберите ответ перед продолжением.");
+            }
+        });
+
+        restartBtn.addEventListener('click', () => {
+            restartQuiz();
+        });
+
+        // Инициализация первого вопроса
+        loadQuestion();
     </script>
 </body>
 </html>
