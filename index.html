@@ -221,25 +221,46 @@
         /* Галерея */
         .gallery {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 10px;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Автоматически заполняем пространство колонками */
+            gap: 10px; /* Расстояние между изображениями */
             padding: 10px;
             animation: fadeIn 1s ease-in-out;
         }
 
+        /* Элементы в галерее */
         .gallery img {
-            width: 100%;
+            width: 100%;  /* Ширина изображения адаптируется под ячейку */
+            height: 300px; /* Фиксированная высота для всех изображений */
+            object-fit: cover; /* Обеспечивает более полное заполнение ячейки */
             border-radius: 8px;
             transition: transform 0.5s ease-in-out, opacity 0.3s, box-shadow 0.3s;
             cursor: pointer;
             animation: zoomIn 1s ease-in-out;
         }
 
+        /* Эффект при наведении */
         .gallery img:hover {
-            transform: scale(1.1) rotate(10deg);
+            transform: scale(1.05);  /* Легкое увеличение изображения */
             opacity: 0.8;
             box-shadow: 0 4px 8px rgba(0,0,0,0.3);
         }
+
+        /* Сетка для оптимального заполнения пространства */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Адаптируемся к доступному пространству */
+            gap: 10px;
+            padding: 10px;
+        }
+
+        /* Сохраняем пропорции изображения */
+        .gallery img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Используем cover для лучшего заполнения пространства */
+            border-radius: 8px;
+        }
+
 
         /* Модальное окно для изображений */
         .modal {
@@ -520,15 +541,25 @@
 
         .soup-card {
             flex: 0 0 auto;
-            width: 289px;
-            background: var(--section-background);
+            width: 300px;
             border-radius: 15px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            transition: transform 0.5s ease-in-out, box-shadow 0.3s;
+            padding: 10px;
+            transition: transform 0.5s ease-in-out, box-shadow 0.3s, background-color 0.3s, color 0.3s;
             cursor: pointer;
             position: relative;
             overflow: hidden;
             animation: jellyIn 1s ease-in-out;
+            background-color: var(--text-color); /* Устанавливаем фон карточки как комплементарный цвет */
+            color: var(--background-color); /* Цвет текста меняется в зависимости от фона */
+        }
+
+        .soup-card h3, .soup-card .soup-description {
+            color: var(--background-color); /* Цвет текста меняется, чтобы быть читаемым на фоне карточки */
+        }
+
+        .soup-card .soup-link {
+            color: var(--link-color); /* Ссылка принимает цвет, который выделяется */
         }
 
         .soup-card:hover {
@@ -537,40 +568,41 @@
         }
 
         .soup-card iframe {
-            width: 100%;
-            height: 400px;
-            border: none;
-            border-radius: 15px 15px 0 0;
+            width: 100%; /* Заставляем его адаптироваться к ширине контейнера */
+            height: 360px; /* Можно уменьшить для добавления обводки */
+            border-radius: 15px; /* Оставьте немного округлений */
+            border: 1px solid #ccc; /* Добавьте обводку вокруг iframe */
+            background: #ffffff; /* Задайте фон белого цвета */
         }
 
         .soup-card h3 {
             margin: 10px;
             font-size: 1.2em;
-            color: var(--text-color);
+            color: var(--section-background); /* Цвет текста для хорошего контраста */
             animation: fadeInDown 1s ease-in-out;
         }
 
         .soup-card .soup-description {
             padding: 0 10px 10px;
-            color: var(--text-color);
+            color: var(--section-background); /* Цвет текста для хорошего контраста */
             display: none;
             font-size: 0.9em;
             line-height: 1.4;
             animation: fadeIn 0.5s ease-in-out;
         }
-
+        
         .soup-card .soup-link {
             margin: 10px;
-            color: var(--link-color);
+            color: #1DB954; /* Установлен постоянный зелёный цвет */
             text-decoration: none;
             font-weight: bold;
-            transition: color 0.3s, transform 0.3s;
+            transition: transform 0.3s; /* Удалён переход цвета */
         }
 
         .soup-card .soup-link:hover {
-            color: #004ba0;
             transform: scale(1.1);
         }
+
 
         /* Плавное раскрытие описания */
         .soup-card.open .soup-description {
@@ -929,6 +961,11 @@
                 <img src="pics/blup.png" alt="Discord Блуп">
                 Присоединяйся к моему Discord
             </a>
+            <!-- Добавляем ссылку на сайт Котобургера -->
+            <a href="https://cotoburger.github.io/index.html" target="_blank">
+                <img src="pics/burger.jpg" alt="Котобургер">
+                Сайт моего друга Котобургера
+            </a>
             <a href="https://isaacdeve.github.io/" target="_blank">
                 <img src="pics/arsen.jpg" alt="Арсен">
                 Сайт моего друга Арсена
@@ -951,66 +988,66 @@
         <div class="soup-container">
             <div class="soup-card" onclick="toggleDescription(this)">
                 <iframe src="https://open.spotify.com/embed/playlist/3rqqUYPZJHryczjOnbasNB?utm_source=generator" loading="lazy"></iframe>
-                <h3>Плейлист 1</h3>
+                <h3>sup dnya vol.1</h3>
                 <a href="https://open.spotify.com/playlist/3rqqUYPZJHryczjOnbasNB" target="_blank" class="soup-link">Слушать на Spotify</a>
                 <div class="soup-description">
-                    <p>Описание плейлиста 1. Здесь вы найдете подборку самых свежих треков для поднятия настроения!</p>
+                    <p>Классический суп дня, вы его не выбирали. Жаль.</p>
                 </div>
             </div>
             <div class="soup-card" onclick="toggleDescription(this)">
                 <iframe src="https://open.spotify.com/embed/playlist/4B7XPUOgr0JspfHkr1h21w?utm_source=generator" loading="lazy"></iframe>
-                <h3>Плейлист 2</h3>
+                <h3>sup dnya vol.2</h3>
                 <a href="https://open.spotify.com/playlist/4B7XPUOgr0JspfHkr1h21w" target="_blank" class="soup-link">Слушать на Spotify</a>
                 <div class="soup-description">
-                    <p>Описание плейлиста 2. Лучшие хиты для уютного вечера с друзьями или семьей.</p>
+                    <p>Добри, хороши, супчик, ням ням, очень миленько, вкусненько.</p>
                 </div>
             </div>
             <div class="soup-card" onclick="toggleDescription(this)">
                 <iframe src="https://open.spotify.com/embed/playlist/6qOPMMLdylVkdjT5kF0WO1?utm_source=generator" loading="lazy"></iframe>
-                <h3>Плейлист 3</h3>
+                <h3>sup dnya vol.3</h3>
                 <a href="https://open.spotify.com/playlist/6qOPMMLdylVkdjT5kF0WO1" target="_blank" class="soup-link">Слушать на Spotify</a>
                 <div class="soup-description">
-                    <p>Описание плейлиста 3. Плейлист с динамичными треками для начала дня.</p>
+                    <p>Малоизвестные шлягеры, дают просраться именитым титанам музыкальной индустрии.</p>
                 </div>
             </div>
             <div class="soup-card" onclick="toggleDescription(this)">
                 <iframe src="https://open.spotify.com/embed/playlist/3b2TwiB0U21T3VuyMGncSO?utm_source=generator" loading="lazy"></iframe>
-                <h3>Плейлист 4</h3>
+                <h3>sup nochi</h3>
                 <a href="https://open.spotify.com/playlist/3b2TwiB0U21T3VuyMGncSO" target="_blank" class="soup-link">Слушать на Spotify</a>
                 <div class="soup-description">
-                    <p>Описание плейлиста 4. Музыка для расслабления после долгого рабочего дня.</p>
+                    <p>Худшие люди на планете земля, в вашем супе.</p>
                 </div>
             </div>
             <div class="soup-card" onclick="toggleDescription(this)">
                 <iframe src="https://open.spotify.com/embed/playlist/69OWqO3GCvLIczeCnJGZLr?utm_source=generator" loading="lazy"></iframe>
-                <h3>Плейлист 5</h3>
+                <h3>sup of war</h3>
                 <a href="https://open.spotify.com/playlist/69OWqO3GCvLIczeCnJGZLr" target="_blank" class="soup-link">Слушать на Spotify</a>
                 <div class="soup-description">
-                    <p>Описание плейлиста 5. Современные хиты для поднятия настроения.</p>
+                    <p>УБИВАТЬ УБИВАТЬ УБИВАТЬ УБИВАТЬ</p>
                 </div>
             </div>
             <div class="soup-card" onclick="toggleDescription(this)">
                 <iframe src="https://open.spotify.com/embed/playlist/5Dlufdhh3HlzfNbDogSHxr?utm_source=generator" loading="lazy"></iframe>
-                <h3>Плейлист 6</h3>
+                <h3>sup nya</h3>
                 <a href="https://open.spotify.com/playlist/5Dlufdhh3HlzfNbDogSHxr" target="_blank" class="soup-link">Слушать на Spotify</a>
                 <div class="soup-description">
-                    <p>Описание плейлиста 6. Музыка для создания теплой и уютной атмосферы.</p>
+                    <p>Не слушайте это, прошу.</p>
                 </div>
             </div>
             <div class="soup-card" onclick="toggleDescription(this)">
                 <iframe src="https://open.spotify.com/embed/playlist/0r5Q9ZOy3VsTpYCwQBNzID?utm_source=generator" loading="lazy"></iframe>
-                <h3>Плейлист 7</h3>
+                <h3>sup govna</h3>
                 <a href="https://open.spotify.com/playlist/0r5Q9ZOy3VsTpYCwQBNzID" target="_blank" class="soup-link">Слушать на Spotify</a>
                 <div class="soup-description">
-                    <p>Описание плейлиста 7. Веселые мелодии для вечеринок и тусовок.</p>
+                    <p>У этой музыки нет стиля, она и есть стиль.</p>
                 </div>
             </div>
             <div class="soup-card" onclick="toggleDescription(this)">
                 <iframe src="https://open.spotify.com/embed/playlist/1GWnWUtKVVgTLpfVuOSNwd?utm_source=generator" loading="lazy"></iframe>
-                <h3>Плейлист 8</h3>
+                <h3>sup step</h3>
                 <a href="https://open.spotify.com/playlist/1GWnWUtKVVgTLpfVuOSNwd" target="_blank" class="soup-link">Слушать на Spotify</a>
                 <div class="soup-description">
-                    <p>Описание плейлиста 8. Песни для вечернего отдыха и размышлений.</p>
+                    <p>Просто говно.</p>
                 </div>
             </div>
         </div>
@@ -1053,6 +1090,15 @@
             <img src="pics/photo2.jpg" alt="Фото 2">
             <img src="pics/photo3.jpg" alt="Фото 3">
             <img src="pics/photo4.jpg" alt="Фото 4">
+            <img src="pics/photo5.jpg" alt="Фото 5">
+            <img src="pics/photo6.jpg" alt="Фото 6">
+            <img src="pics/photo7.jpg" alt="Фото 7">
+            <img src="pics/photo8.jpg" alt="Фото 8">
+            <img src="pics/photo9.jpg" alt="Фото 9">
+            <img src="pics/photo10.jpg" alt="Фото 10">
+            <img src="pics/photo11.jpg" alt="Фото 11">
+            <img src="pics/photo12.jpg" alt="Фото 12">
+            <img src="pics/photo13.jpg" alt="Фото 13">
             <!-- Добавьте больше изображений по необходимости -->
         </div>
     </section>
@@ -1124,23 +1170,27 @@
 
         // Сохранение выбранной темы в localStorage
         document.addEventListener('DOMContentLoaded', () => {
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme) {
-                const index = themes.indexOf(savedTheme);
-                if (index !== -1) {
-                    currentTheme = index;
-                    if (savedTheme !== 'light') {
-                        body.classList.add(`theme-${savedTheme}`);
-                    }
-                }
-            }
+            const soupCards = document.querySelectorAll('.soup-card');
 
-            // Обновление локального хранилища при переключении темы
-            themeSwitcher.addEventListener('click', () => {
-                const selectedTheme = themes[currentTheme];
-                localStorage.setItem('theme', selectedTheme);
+            const colorMap = {
+                'https://open.spotify.com/embed/playlist/3rqqUYPZJHryczjOnbasNB?utm_source=generator': '#7e7e7e',
+                'https://open.spotify.com/embed/playlist/4B7XPUOgr0JspfHkr1h21w?utm_source=generator': '#ff4b4b',
+                'https://open.spotify.com/embed/playlist/6qOPMMLdylVkdjT5kF0WO1?utm_source=generator': '#5a9cd4',
+                'https://open.spotify.com/embed/playlist/3b2TwiB0U21T3VuyMGncSO?utm_source=generator': '#7e7e7e',
+                'https://open.spotify.com/embed/playlist/69OWqO3GCvLIczeCnJGZLr?utm_source=generator': '#ff9933',
+                'https://open.spotify.com/embed/playlist/5Dlufdhh3HlzfNbDogSHxr?utm_source=generator': '#d36adc',
+                'https://open.spotify.com/embed/playlist/0r5Q9ZOy3VsTpYCwQBNzID?utm_source=generator': '#b08d57',
+                'https://open.spotify.com/embed/playlist/1GWnWUtKVVgTLpfVuOSNwd?utm_source=generator': '#3399ff'
+            };
+
+            soupCards.forEach((card) => {
+                const iframe = card.querySelector('iframe');
+                if (colorMap[iframe.src]) {
+                    card.style.borderColor = colorMap[iframe.src]; // Устанавливаем цвет рамки
+                }
             });
         });
+
 
         // Функция для плавного перехода к секции
         function scrollToSection(sectionId) {
