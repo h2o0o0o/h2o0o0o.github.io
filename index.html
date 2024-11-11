@@ -39,8 +39,6 @@
             --button-hover-background: rgba(0, 0, 0, 0.8);
         }
 
-        /* Остальные темы опущены для краткости */
-
         /* Сброс стилей */
         * {
             margin: 0;
@@ -77,6 +75,7 @@
             align-items: center;
             max-width: 1200px;
             margin: 0 auto;
+            position: relative;
         }
 
         .nav-logo {
@@ -90,6 +89,7 @@
         .nav-menu {
             display: flex;
             gap: 1rem;
+            align-items: center;
         }
 
         .nav-menu a {
@@ -661,6 +661,19 @@
             animation: fadeIn 1s ease-in-out;
         }
 
+        /* Скрываем карусель до полной загрузки изображений */
+        .swiper-container-hidden {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 1s ease-in-out, visibility 1s ease-in-out;
+        }
+
+        .swiper-container-visible {
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 1s ease-in-out, visibility 1s ease-in-out;
+        }
+
         /* Swiper карусель */
         .swiper-container {
             width: 100%;
@@ -671,6 +684,10 @@
             padding-right: 50px;
         }
 
+        .swiper-wrapper {
+            transition: transform 0.8s ease-in-out;
+        }
+
         .swiper-slide {
             background-position: center;
             background-size: cover;
@@ -679,7 +696,7 @@
             border-radius: 15px;
             overflow: hidden;
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            transition: transform 0.5s ease-in-out, box-shadow 0.3s;
+            transition: transform 0.5s ease-in-out, box-shadow 0.3s, opacity 0.3s;
             position: relative;
         }
 
@@ -688,11 +705,13 @@
             height: 100%;
             object-fit: cover;
             border-radius: 15px;
+            display: block;
         }
 
         .swiper-slide-active {
             transform: scale(1.1);
             box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+            transition: transform 0.5s ease-in-out, box-shadow 0.3s;
         }
 
         .swiper-slide-next,
@@ -700,6 +719,7 @@
             transform: scale(0.8) rotate(10deg);
             opacity: 0.6;
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: transform 0.5s ease-in-out, box-shadow 0.3s, opacity 0.3s;
         }
 
         /* Добавление теней для боковых слайдов */
@@ -966,7 +986,7 @@
             }
 
             .nav-menu.active {
-                max-height: 500px; /* Достаточно большое значение для отображения всех ссылок */
+                max-height: 1000px; /* Достаточно большое значение для отображения всех ссылок и подменю */
             }
 
             .hamburger {
@@ -1049,6 +1069,106 @@
                 width: 250px;
                 height: 350px;
             }
+
+            /* Стили для выпадающего меню в мобильной версии */
+            .dropdown-content {
+                display: none;
+                flex-direction: column;
+                background: var(--navbar-color);
+                position: static;
+                width: 100%;
+                transition: max-height 0.5s ease-in-out;
+            }
+
+            .dropdown.active .dropdown-content {
+                display: flex;
+            }
+
+            .dropdown-content a {
+                padding: 0.5rem 1rem;
+                border-top: 1px solid #444;
+            }
+        }
+
+        /* Стили для выпадающего меню */
+        .dropdown {
+            position: relative;
+        }
+
+        .dropbtn {
+            display: inline-block;
+            color: var(--navbar-text-color);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            font-weight: bold;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .dropbtn::after {
+            content: ' ▼';
+            font-size: 0.6em;
+            margin-left: 5px;
+            transition: transform 0.3s;
+        }
+
+        .dropdown:hover .dropbtn::after {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-content {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: var(--navbar-color);
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            display: none;
+            flex-direction: column;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: flex;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .dropdown-content a {
+            color: var(--navbar-text-color);
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .dropdown-content a:hover {
+            background: var(--link-color);
+            color: #ffffff;
+        }
+
+        /* Мобильная версия: анимация раскрытия подменю */
+        @media (max-width: 768px) {
+            .dropdown-content {
+                position: static;
+                max-height: 0;
+                overflow: hidden;
+                opacity: 1;
+                transform: translateY(0);
+                transition: max-height 0.5s ease-in-out;
+            }
+
+            .dropdown.active .dropdown-content {
+                max-height: 500px; /* Достаточно большое значение для отображения всех ссылок */
+            }
+
+            .dropdown:hover .dropbtn::after {
+                transform: rotate(0deg);
+            }
         }
     </style>
 </head>
@@ -1063,7 +1183,15 @@
                 <a href="#about">Обо мне</a>
                 <a href="#soups">Супы дня</a>
                 <a href="#egor">Егор Крид</a>
-                <a href="swift-test.html">Тест Тейлор Свифт</a>
+                <div class="dropdown">
+                    <a href="#" class="dropbtn">Развлечения</a>
+                    <div class="dropdown-content">
+                        <a href="swift-test.html">Тест Тейлор Свифт</a>
+                        <a href="casino.html">КАЗИНО</a> <!-- Новая ссылка -->
+                        <!-- <a href="mini-game1.html">Мини-игра 1</a> -->
+                        <!-- <a href="mini-game2.html">Мини-игра 2</a> -->
+                    </div>
+                </div>
                 <a href="#gallery">Галерея</a>
                 <a href="#contact">Контакты</a>
             </div>
@@ -1130,7 +1258,7 @@
     <section id="egor" class="section">
         <h2>Егор Крид</h2>
         <!-- Swiper -->
-        <div class="swiper-container">
+        <div class="swiper-container swiper-container-hidden" id="egor-swiper">
             <div class="swiper-wrapper">
                 <div class="swiper-slide"><img src="pics/egor1.jpg" alt="Егор Крид Фото 1"></div>
                 <div class="swiper-slide"><img src="pics/egor2.jpg" alt="Егор Крид Фото 2"></div>
@@ -1246,8 +1374,6 @@
         // Размер сдвига при прокрутке
         const scrollAmount = 300;
 
-        // Удаляем флаг isScrollingSoups, чтобы разрешить многократные нажатия
-        // Предотвращение дерганий достигается за счет плавной прокрутки браузера
         scrollLeftBtn.addEventListener('click', () => {
             soupContainer.scrollBy({
                 left: -scrollAmount,
@@ -1328,30 +1454,71 @@
             });
         });
 
-        // Инициализация Swiper для карусели "Егор Крид"
-        var swiper = new Swiper('.swiper-container', {
-            effect: 'coverflow',
-            grabCursor: true,
-            centeredSlides: true,
-            slidesPerView: 2.5, // Устанавливаем 2.5 слайда для частичной видимости боковых
-            loop: true,
-            speed: 800, // Для более плавной анимации
-            coverflowEffect: {
-                rotate: 30,
-                stretch: 0,
-                depth: 200,
-                modifier: 1,
-                slideShadows: false, // Отключаем встроенные тени
-            },
-            freeMode: false, // Отключаем свободный режим, чтобы избежать проблем с циклом
-            slideToClickedSlide: true, // Позволяет переключаться на кликнутый слайд
-            navigation: false, // Отключаем навигационные стрелки
-            breakpoints: {
-                768: {
-                    slidesPerView: 1.5, // На мобильных устройствах показываем меньше слайдов
-                }
-            }
+        // Обработка клика на выпадающее меню в мобильной версии
+        const dropdown = document.querySelector('.dropdown');
+        const dropbtn = document.querySelector('.dropbtn');
+        const dropdownContent = document.querySelector('.dropdown-content');
+
+        dropbtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            dropdown.classList.toggle('active');
         });
+
+        // Функция для проверки загрузки всех изображений в карусели
+        function preloadImages(selector) {
+            const images = document.querySelectorAll(selector);
+            const promises = [];
+
+            images.forEach((img) => {
+                if (img.complete) {
+                    return;
+                }
+                promises.push(new Promise((resolve, reject) => {
+                    img.onload = resolve;
+                    img.onerror = reject;
+                }));
+            });
+
+            return Promise.all(promises);
+        }
+
+        // Предварительная загрузка изображений в карусели "Егор Крид"
+        preloadImages('#egor-swiper .swiper-slide img')
+            .then(() => {
+                // Показать карусель после загрузки всех изображений
+                const egorSwiper = document.getElementById('egor-swiper');
+                egorSwiper.classList.remove('swiper-container-hidden');
+                egorSwiper.classList.add('swiper-container-visible');
+
+                // Инициализация Swiper после загрузки изображений
+                var swiper = new Swiper('.swiper-container', {
+                    effect: 'coverflow',
+                    grabCursor: true,
+                    centeredSlides: true,
+                    slidesPerView: 2.5, // Устанавливаем 2.5 слайда для частичной видимости боковых
+                    loop: true,
+                    speed: 800, // Для более плавной анимации
+                    coverflowEffect: {
+                        rotate: 30,
+                        stretch: 0,
+                        depth: 200,
+                        modifier: 1,
+                        slideShadows: false, // Отключаем встроенные тени
+                    },
+                    freeMode: true, // Включаем свободный режим для инерции
+                    inertia: true, // Включаем инерцию
+                    slideToClickedSlide: true, // Позволяет переключаться на кликнутый слайд
+                    navigation: false, // Отключаем навигационные стрелки
+                    breakpoints: {
+                        768: {
+                            slidesPerView: 1.5, // На мобильных устройствах показываем меньше слайдов
+                        }
+                    }
+                });
+            })
+            .catch((error) => {
+                console.error('Ошибка при загрузке изображений карусели "Егор Крид":', error);
+            });
     });
     </script>
 </body>
