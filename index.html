@@ -1170,6 +1170,21 @@
                 transform: rotate(0deg);
             }
         }
+        /* Добавляем стили для отображения баланса */
+        #balance-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        #balance {
+            font-size: 1.2em;
+            color: var(--balance-color, #ffcc00);
+        }
+
+        #balance-amount {
+            font-weight: bold;
+        }
     </style>
 </head>
 <body class="theme-dark">
@@ -1194,6 +1209,9 @@
                 </div>
                 <a href="#gallery">Галерея</a>
                 <a href="#contact">Контакты</a>
+            <!-- Добавляем отображение баланса -->
+            <div id="balance-container">
+                <div id="balance">Баланс: <span id="balance-amount">0</span> 💰</div>
             </div>
             <div class="hamburger" id="hamburger">
                 <span></span>
@@ -1392,6 +1410,12 @@
         var modal = document.getElementById('modal');
         var modalImg = document.getElementById('modal-img');
         var captionText = document.getElementById('modal-caption');
+
+        const balanceAmountElement = document.getElementById('balance-amount');
+        if (balanceAmountElement) {
+            let balance = parseInt(localStorage.getItem('balance')) || 0;
+            balanceAmountElement.textContent = balance;
+        }
 
         // Закрытие модального окна
         var span = document.getElementsByClassName('close')[0];

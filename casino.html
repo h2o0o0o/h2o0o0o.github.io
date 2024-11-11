@@ -1146,10 +1146,26 @@
 
     <!-- Скрипты -->
     <script>
+        // Объявляем переменные ОДИН раз в глобальной области видимости
+        let balance;
+        let currentBet;
+
         // Дисклеймер при загрузке страницы
         window.onload = function() {
             document.getElementById('disclaimer-modal').style.display = 'block';
             initReels();
+
+            // При загрузке страницы считываем баланс из localStorage
+            let savedBalance = parseInt(localStorage.getItem('balance'));
+            if (!isNaN(savedBalance)) {
+                balance = savedBalance;
+            } else {
+                balance = 1000; // Устанавливаем значение по умолчанию
+            }
+            updateBalance();
+
+            // Инициализируем текущую ставку
+            currentBet = 50;
         }
 
         function closeModal() {
@@ -1174,11 +1190,10 @@
             closeTopUpModal();
         }
 
-        let balance = 1000;
-        let currentBet = 50;
-
         function updateBalance() {
             document.getElementById('balance-amount').textContent = balance;
+            // Сохраняем баланс в localStorage
+            localStorage.setItem('balance', balance);
         }
 
         function showGame(gameId) {
