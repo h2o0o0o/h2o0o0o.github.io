@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Магазин - Олек</title>
+    <link rel="icon" href="pics/avatar.jpg" type="image/jpeg">
+    <style>
+        /* CSS-переменные для тем */
+        :root {
+            --background-color: #ffffff;
+            --text-color: #222222;
+            --navbar-color: #1a1a1a;
+            --navbar-text-color: #f0f0f0;
+            --section-background: #f9f9f9;
+            --link-color: #1a73e8;
+            --footer-background: #1a1a1a;
+            --footer-text-color: #f0f0f0;
+            --button-background: rgba(255, 255, 255, 0.8);
+            --button-hover-background: rgba(255, 255, 255, 1);
+            --balance-color: #ffcc00;
+        }
+
+        /* Темная тема */
+        .theme-dark {
+            --background-color: #121212;
+            --text-color: #e0e0e0;
+            --navbar-color: #1f1f1f;
+            --navbar-text-color: #e0e0e0;
+            --section-background: #1e1e1e;
+            --link-color: #bb86fc;
+            --footer-background: #1f1f1f;
+            --footer-text-color: #e0e0e0;
+            --button-background: rgba(0, 0, 0, 0.6);
+            --button-hover-background: rgba(0, 0, 0, 0.8);
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        /* Верхняя панель с балансом и кнопкой назад */
+        .top-bar {
+            background: var(--navbar-color);
+            color: var(--navbar-text-color);
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .back-button {
+            background-color: var(--link-color);
+            border: none;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .back-button:hover {
+            background-color: #004ba0;
+            transform: scale(1.05);
+        }
+
+        .balance {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: var(--balance-color);
+        }
+
+        /* Кнопка сортировки */
+        .sort-button {
+            margin: 20px;
+            padding: 10px 20px;
+            background-color: var(--link-color);
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .sort-button:hover {
+            background-color: #004ba0;
+            transform: scale(1.05);
+        }
+
+        /* Стили для товаров */
+        .shop-items {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .shop-item {
+            position: relative;
+            width: 250px;
+            overflow: hidden;
+            border-radius: 10px;
+            background-color: var(--section-background);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .shop-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+        }
+
+        .shop-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .shop-item h3 {
+            margin: 10px;
+            text-align: center;
+        }
+
+        /* Блюр и замок */
+        .shop-item.locked img {
+            filter: blur(15px);
+        }
+
+        .shop-item .lock-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            font-size: 1.5em;
+        }
+
+        .shop-item .lock-overlay img {
+            width: 50px;
+            height: 50px;
+            margin-bottom: 10px;
+        }
+
+        /* Анимация разблокировки */
+        @keyframes unlockAnimation {
+            0% {
+                transform: scale(0.5) rotateY(0deg);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.2) rotateY(180deg);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1) rotateY(360deg);
+            }
+        }
+
+        .shop-item.unlocked {
+            animation: unlockAnimation 1s forwards;
+        }
+
+        /* Переключатель тем */
+        .theme-switcher {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--button-background);
+            border: none;
+            border-radius: 50%;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 1.5em;
+            transition: background 0.3s, transform 0.5s ease-in-out;
+            z-index: 1001;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .theme-switcher:hover {
+            background: var(--button-hover-background);
+            transform: rotate(360deg) scale(1.1);
+        }
+
+        /* Модальное окно подтверждения покупки */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.8);
+        }
+
+        .modal-content {
+            background-color: var(--section-background);
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid var(--navbar-color);
+            width: 80%;
+            max-width: 500px;
+            text-align: center;
+            border-radius: 10px;
+        }
+
+        .modal-content h2 {
+            margin-bottom: 20px;
+        }
+
+        .modal-content button {
+            padding: 10px 20px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        .modal-content .confirm-btn {
+            background-color: #4caf50;
+            color: #fff;
+        }
+
+        .modal-content .cancel-btn {
+            background-color: #f44336;
+            color: #fff;
+        }
+
+        /* Модальное окно просмотра изображения */
+        .image-modal {
+            display: none;
+            position: fixed;
+            z-index: 3000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.9);
+            animation: fadeIn 0.5s;
+        }
+
+        .image-modal-content {
+            margin: auto;
+            display: block;
+            width: 80%;
+            max-width: 800px;
+            margin-top: 5%;
+            animation: zoomIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+
+        @keyframes zoomIn {
+            from {transform: scale(0.5);}
+            to {transform: scale(1);}
+        }
+
+        .close-image-modal {
+            position: absolute;
+            top: 20px;
+            right: 35px;
+            color: #ffffff;
+            font-size: 35px;
+            font-weight: bold;
+            transition: color 0.3s, transform 0.3s;
+            cursor: pointer;
+        }
+
+        .close-image-modal:hover,
+        .close-image-modal:focus {
+            color: #bbb;
+            transform: rotate(90deg);
+        }
+
+        /* Адаптивность */
+        @media (max-width: 600px) {
+            .shop-item {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body class="theme-dark">
+    <!-- Верхняя панель -->
+    <div class="top-bar">
+        <button class="back-button" onclick="goBack()">Назад</button>
+        <div class="balance">Баланс: <span id="balance-amount">0</span></div>
+    </div>
+
+    <!-- Кнопка сортировки -->
+    <div style="text-align: center;">
+        <button class="sort-button" id="sort-button">Сортировать по цене: по возрастанию</button>
+    </div>
+
+    <!-- Контент магазина -->
+    <div class="shop-items" id="shop-items">
+        <!-- Товары будут загружены сюда из shop.json -->
+    </div>
+
+    <!-- Модальное окно подтверждения покупки -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <h2 id="modal-message">Вы уверены, что хотите купить этот товар за <span id="modal-price"></span> монет?</h2>
+            <button class="confirm-btn" id="confirm-purchase">Купить</button>
+            <button class="cancel-btn" id="cancel-purchase">Отмена</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно просмотра изображения -->
+    <div id="image-modal" class="image-modal">
+        <span class="close-image-modal" id="close-image-modal">&times;</span>
+        <img class="image-modal-content" id="modal-image">
+    </div>
+
+    <!-- Переключатель тем -->
+    <button class="theme-switcher" id="theme-switcher" title="Переключить тему">🌈</button>
+
+    <!-- Скрипты -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Получение баланса из localStorage
+            let balance = parseInt(localStorage.getItem('balance')) || 0;
+            const balanceAmountElement = document.getElementById('balance-amount');
+            balanceAmountElement.textContent = balance;
+
+            // Список купленных товаров из куки
+            let purchasedItems = getCookie('purchasedItems');
+            if (purchasedItems) {
+                purchasedItems = JSON.parse(purchasedItems);
+            } else {
+                purchasedItems = [];
+            }
+
+            // Переменная для хранения товаров
+            let itemsData = [];
+
+            // Функция загрузки товаров
+            fetch('shop.json')
+                .then(response => response.json())
+                .then(data => {
+                    itemsData = data.items;
+                    renderItems(itemsData);
+                })
+                .catch(error => {
+                    console.error('Ошибка при загрузке товаров:', error);
+                });
+
+            // Функция отображения товаров
+            function renderItems(items) {
+                const shopItemsContainer = document.getElementById('shop-items');
+                shopItemsContainer.innerHTML = '';
+                items.forEach(item => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.classList.add('shop-item');
+                    itemDiv.dataset.itemId = item.id;
+
+                    if (!purchasedItems.includes(item.id)) {
+                        itemDiv.classList.add('locked');
+                    } else {
+                        itemDiv.classList.add('unlocked');
+                    }
+
+                    itemDiv.innerHTML = `
+                        <img src="${item.image}" alt="${item.name}">
+                        <h3>${item.name}</h3>
+                    `;
+
+                    if (!purchasedItems.includes(item.id)) {
+                        const lockOverlay = document.createElement('div');
+                        lockOverlay.classList.add('lock-overlay');
+                        lockOverlay.innerHTML = `
+                            <img src="pics/lock_icon.png" alt="Locked">
+                            <span>${item.price} монет</span>
+                        `;
+                        itemDiv.appendChild(lockOverlay);
+                    }
+
+                    itemDiv.addEventListener('click', () => {
+                        if (!purchasedItems.includes(item.id)) {
+                            openPurchaseModal(item);
+                        } else {
+                            openImageModal(item.image);
+                        }
+                    });
+
+                    shopItemsContainer.appendChild(itemDiv);
+                });
+            }
+
+            // Функция открытия модального окна покупки
+            function openPurchaseModal(item) {
+                const modal = document.getElementById('modal');
+                const modalMessage = document.getElementById('modal-message');
+                const modalPrice = document.getElementById('modal-price');
+                modalMessage.textContent = `Вы уверены, что хотите купить "${item.name}" за `;
+                modalPrice.textContent = `${item.price}`;
+                modal.style.display = 'block';
+
+                const confirmBtn = document.getElementById('confirm-purchase');
+                const cancelBtn = document.getElementById('cancel-purchase');
+
+                confirmBtn.onclick = () => {
+                    if (balance >= item.price) {
+                        balance -= item.price;
+                        balanceAmountElement.textContent = balance;
+                        localStorage.setItem('balance', balance);
+                        purchasedItems.push(item.id);
+                        setCookie('purchasedItems', JSON.stringify(purchasedItems), 365);
+                        unlockItem(item.id);
+                        modal.style.display = 'none';
+                    } else {
+                        alert('Недостаточно средств!');
+                        modal.style.display = 'none';
+                    }
+                };
+
+                cancelBtn.onclick = () => {
+                    modal.style.display = 'none';
+                };
+            }
+
+            // Функция разблокировки товара
+            function unlockItem(itemId) {
+                const itemDiv = document.querySelector(`.shop-item[data-item-id='${itemId}']`);
+                itemDiv.classList.remove('locked');
+                itemDiv.classList.add('unlocked');
+                const lockOverlay = itemDiv.querySelector('.lock-overlay');
+                if (lockOverlay) {
+                    lockOverlay.remove();
+                }
+                // Добавить анимацию разблокировки
+                itemDiv.classList.add('unlocked-animation');
+                setTimeout(() => {
+                    itemDiv.classList.remove('unlocked-animation');
+                }, 1000);
+            }
+
+            // Функции для работы с куки
+            function setCookie(name, value, days) {
+                let expires = "";
+                if (days) {
+                    const date = new Date();
+                    date.setTime(date.getTime() + (days*24*60*60*1000));
+                    expires = "; expires=" + date.toUTCString();
+                }
+                document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+            }
+
+            function getCookie(name) {
+                const nameEQ = name + "=";
+                const ca = document.cookie.split(';');
+                for(let i=0;i < ca.length;i++) {
+                    let c = ca[i];
+                    while (c.charAt(0)==' ') c = c.substring(1,c.length);
+                    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+                }
+                return null;
+            }
+
+            // Кнопка назад
+            window.goBack = function() {
+                window.history.back();
+            };
+
+            // Переключатель тем
+            const themeSwitcher = document.getElementById('theme-switcher');
+            const body = document.body;
+
+            const themes = ['light', 'dark', 'green', 'yellow', 'pink'];
+            let currentTheme = localStorage.getItem('theme') || 'dark';
+
+            if (currentTheme !== 'light') {
+                body.classList.add(`theme-${currentTheme}`);
+            }
+
+            themeSwitcher.addEventListener('click', () => {
+                let currentThemeIndex = themes.indexOf(currentTheme);
+                currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+                currentTheme = themes[currentThemeIndex];
+                body.className = '';
+                if (currentTheme !== 'light') {
+                    body.classList.add(`theme-${currentTheme}`);
+                }
+                localStorage.setItem('theme', currentTheme);
+            });
+
+            // Закрытие модального окна при клике вне контента
+            window.onclick = function(event) {
+                const modal = document.getElementById('modal');
+                const imageModal = document.getElementById('image-modal');
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                }
+                if (event.target == imageModal) {
+                    imageModal.style.display = 'none';
+                }
+            };
+
+            // Функция открытия модального окна изображения
+            function openImageModal(imageSrc) {
+                const imageModal = document.getElementById('image-modal');
+                const modalImage = document.getElementById('modal-image');
+                imageModal.style.display = 'block';
+                modalImage.src = imageSrc;
+            }
+
+            // Закрытие модального окна изображения
+            const closeImageModalBtn = document.getElementById('close-image-modal');
+            closeImageModalBtn.onclick = function() {
+                const imageModal = document.getElementById('image-modal');
+                imageModal.style.display = 'none';
+            };
+
+            // Сортировка товаров
+            const sortButton = document.getElementById('sort-button');
+            let sortAscending = true;
+            sortButton.addEventListener('click', () => {
+                sortAscending = !sortAscending;
+                if (sortAscending) {
+                    sortButton.textContent = 'Сортировать по цене: по возрастанию';
+                } else {
+                    sortButton.textContent = 'Сортировать по цене: по убыванию';
+                }
+                sortItemsByPrice(sortAscending);
+            });
+
+            function sortItemsByPrice(ascending) {
+                itemsData.sort((a, b) => {
+                    if (ascending) {
+                        return a.price - b.price;
+                    } else {
+                        return b.price - a.price;
+                    }
+                });
+                renderItems(itemsData);
+            }
+        });
+    </script>
+</body>
+</html>

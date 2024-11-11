@@ -1,0 +1,52 @@
+{
+    "items": [
+        {
+            "id": 1,
+            "name": "NFT Картинка 1",
+            "image": "pics/magazine/pic1.jpg",
+            "price": 5000
+        },
+        {
+            "id": 2,
+            "name": "NFT Картинка 1",
+            "image": "pics/store/pic2.jpg",
+            "price": 100
+        },
+        {
+            "id": 3,
+            "name": "NFT Картинка 1",
+            "image": "pics/store/pic3.jpg",
+            "price": 100
+        },
+        {
+            "id": 4,
+            "name": "NFT Картинка 1",
+            "image": "pics/store/pic4.jpg",
+            "price": 100
+        },
+        {
+            "id": 5,
+            "name": "NFT Картинка 1",
+            "image": "pics/store/pic5.jpg",
+            "price": 100
+        },
+        {
+            "id": 6,
+            "name": "NFT Картинка 1",
+            "image": "pics/store/pic6.jpg",
+            "price": 100
+        },
+        {
+            "id": 7,
+            "name": "NFT Картинка 1",
+            "image": "pics/store/pic7.jpg",
+            "price": 100
+        },
+        {
+            "id": 8,
+            "name": "NFT Картинка 1",
+            "image": "pics/store/pic8.jpg",
+            "price": 100
+        }
+    ]
+}

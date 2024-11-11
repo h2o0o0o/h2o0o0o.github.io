@@ -238,30 +238,7 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.3);
         }
 
-        /* Галерея */
-        .gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 10px;
-            padding: 10px;
-            animation: fadeIn 1s ease-in-out;
-        }
-
-        .gallery img {
-            width: 100%;
-            height: 300px;
-            object-fit: cover;
-            border-radius: 8px;
-            transition: transform 0.5s ease-in-out, opacity 0.3s, box-shadow 0.3s;
-            cursor: pointer;
-            animation: zoomIn 1s ease-in-out;
-        }
-
-        .gallery img:hover {
-            transform: scale(1.05);
-            opacity: 0.8;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-        }
+        /* Галерея убрана */
 
         /* Модальное окно для изображений */
         .modal {
@@ -394,7 +371,7 @@
                 transform: translateY(10px);
             }
             80% {
-                transform: translateY(-5px);
+                transform: translateY(-5%);
             }
             100% {
                 transform: translateY(0);
@@ -529,16 +506,16 @@
         /* Секция "Супы дня" */
         .soup-container-wrapper {
             position: relative;
-            padding-bottom: 50px; /* Обеспечиваем пространство снизу для кнопок */
+            padding-bottom: 50px;
         }
 
         .scroll-buttons {
             display: flex;
             position: absolute;
-            bottom: 10px; /* Расположение кнопок чуть выше нижней границы */
-            right: 10px; /* Отступ справа */
-            gap: 10px; /* Расстояние между кнопками */
-            z-index: 10; /* Убедимся, что кнопки находятся поверх других элементов */
+            bottom: 10px;
+            right: 10px;
+            gap: 10px;
+            z-index: 10;
         }
 
         .scroll-btn {
@@ -574,7 +551,7 @@
         }
 
         .soup-container::-webkit-scrollbar {
-            display: none; /* Убираем стандартную полосу прокрутки */
+            display: none;
         }
 
         .soup-card {
@@ -590,7 +567,7 @@
             animation: jellyIn 1s ease-in-out;
             background-color: var(--text-color);
             color: var(--background-color);
-            border: 2px solid transparent; /* Изначально прозрачная граница */
+            border: 2px solid transparent;
         }
 
         .soup-card h3, .soup-card .soup-description {
@@ -645,7 +622,6 @@
             transform: scale(1.1);
         }
 
-        /* Плавное раскрытие описания */
         .soup-card.open .soup-description {
             display: block;
             animation: fadeInUp 0.5s ease-in-out;
@@ -679,7 +655,6 @@
             width: 100%;
             padding-top: 50px;
             padding-bottom: 50px;
-            /* Добавляем отступы слева и справа для частичной видимости */
             padding-left: 50px;
             padding-right: 50px;
         }
@@ -722,7 +697,6 @@
             transition: transform 0.5s ease-in-out, box-shadow 0.3s, opacity 0.3s;
         }
 
-        /* Добавление теней для боковых слайдов */
         .swiper-slide-next::after,
         .swiper-slide-prev::after {
             content: '';
@@ -736,13 +710,11 @@
             pointer-events: none;
         }
 
-        /* Удаляем стрелки навигации */
         .swiper-button-next,
         .swiper-button-prev {
             display: none;
         }
 
-        /* Модификация секции "Егор Крид" */
         #egor .swiper-container {
             width: 100%;
             max-width: 800px;
@@ -759,42 +731,141 @@
             animation: fadeInUp 1s ease-in-out;
         }
 
-        /* Секция "Галерея" */
-        #gallery {
+        /* Секция "Казино" */
+        .casino-section {
+            text-align: center;
+            padding: 40px 20px;
             animation: fadeIn 1s ease-in-out;
         }
 
-        /* Секция "Контакты" */
-        #contact {
+        .casino-section h2 {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        .casino-button {
+            display: inline-block;
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .casino-button img {
+            width: 100%;
+            max-width: 1200px;
+            height: auto;
+            border-radius: 15px;
+            display: block;
+        }
+
+        .casino-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+        }
+
+        .casino-button h2 {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+            font-size: 3em;
+            margin: 0;
+        }
+
+        /* Секция "Магазин" */
+        #shop {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
             animation: fadeIn 1s ease-in-out;
         }
 
-        #contact p {
-            margin-bottom: 10px;
+        #shop h2 {
+            margin-bottom: 30px;
+        }
+
+        #shop p {
+            max-width: 800px;
+            margin-bottom: 20px;
+            line-height: 1.8;
             animation: fadeInUp 1s ease-in-out;
         }
 
-        #contact ul {
-            list-style: none;
-            padding: 0;
+        /* Стили для магазина */
+        #shop-content {
             display: flex;
+            flex-wrap: wrap;
             justify-content: center;
             gap: 20px;
+        }
+
+        .shop-item {
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px;
+            text-align: center;
+            background-color: var(--section-background);
+            transition: transform 0.3s, box-shadow 0.3s;
+            width: 250px;
+        }
+
+        .shop-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+
+        .shop-item img {
+            width: 100%;
+            max-width: 200px;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .shop-item h3 {
             margin-top: 10px;
-            animation: fadeInUp 1s ease-in-out;
         }
 
-        #contact ul li a {
-            color: var(--link-color);
+        .shop-item p {
+            margin: 5px 0;
+        }
+
+        .shop-item button {
+            padding: 10px 20px;
+            background-color: var(--link-color);
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .shop-item button:hover {
+            background-color: #004ba0;
+        }
+
+        .shop-button {
+            display: inline-block;
+            padding: 15px 30px;
+            background-color: var(--link-color);
+            color: #fff;
             text-decoration: none;
-            transition: color 0.3s, transform 0.5s ease-in-out;
+            border-radius: 10px;
             font-size: 1.2em;
+            transition: background-color 0.3s, transform 0.3s;
         }
 
-        #contact ul li a:hover {
-            color: #004ba0;
-            transform: scale(1.1) rotate(5deg);
+        .shop-button:hover {
+            background-color: #004ba0;
+            transform: scale(1.05);
         }
+
 
         /* Футер */
         footer {
@@ -808,157 +879,6 @@
             transition: background 0.3s, color 0.3s;
             font-size: 0.9em;
             animation: fadeIn 1s ease-in-out;
-        }
-
-        /* Секция "Тест Тейлор Свифт" */
-        #swift-test {
-            animation: fadeIn 1s ease-in-out;
-        }
-
-        #swift-test h2 {
-            margin-bottom: 20px;
-            animation: rubberBand 1s ease-in-out;
-            text-align: center; 
-            margin: 0 auto;
-        }
-
-        .quiz-container {
-            max-width: 900px;
-            margin: 50px auto;
-            background: var(--section-background);
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            transition: background 0.3s;
-            animation: jellyIn 1s ease-in-out;
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* Добавляем фоновые изображения */
-        .quiz-container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-            background: url('taylor/taylor_swift.png') no-repeat center center;
-            background-size: cover;
-            opacity: 0.4;
-            pointer-events: none;
-        }
-
-        .quiz-question {
-            margin-bottom: 20px;
-            animation: fadeInDown 1s ease-in-out;
-            font-weight: bold;
-            font-size: 1.2em;
-        }
-
-        .quiz-options {
-            list-style: none;
-            padding: 0;
-        }
-
-        .quiz-options li {
-            margin-bottom: 10px;
-            animation: fadeInUp 1s ease-in-out;
-            position: relative;
-            padding-left: 30px;
-        }
-
-        .quiz-options label {
-            cursor: pointer;
-            transition: color 0.3s;
-        }
-
-        .quiz-options input {
-            position: absolute;
-            left: 0;
-            top: 0;
-        }
-
-        .quiz-options input:checked + label {
-            color: var(--link-color);
-        }
-
-        .quiz-navigation {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 40px;
-        }
-
-        .quiz-navigation button {
-            padding: 10px 20px;
-            border: none;
-            background: var(--link-color);
-            color: #fff;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.3s, transform 0.5s ease-in-out;
-            animation: bounceIn 1s ease-in-out;
-        }
-
-        .quiz-navigation button:hover {
-            background: #004ba0;
-            transform: scale(1.1);
-        }
-
-        .quiz-progress {
-            margin-top: 20px;
-            height: 20px;
-            background: #ddd;
-            border-radius: 10px;
-            overflow: hidden;
-            animation: fadeIn 1s ease-in-out;
-        }
-
-        .quiz-progress-bar {
-            height: 100%;
-            width: 0%;
-            background: var(--link-color);
-            transition: width 0.3s;
-        }
-
-        .quiz-result {
-            text-align: center;
-            animation: fadeInUp 1s ease-in-out;
-        }
-
-        .quiz-result h3 {
-            margin-bottom: 20px;
-            animation: rubberBand 1s ease-in-out;
-        }
-
-        .quiz-result p {
-            margin-bottom: 10px;
-            animation: fadeInUp 1s ease-in-out;
-        }
-
-        .certificate {
-            margin-top: 20px;
-            padding: 20px;
-            border: 2px solid var(--link-color);
-            border-radius: 10px;
-            background: #f0f0f0;
-            animation: jellyIn 1s ease-in-out;
-            position: relative;
-            overflow: hidden;
-            display: none;
-        }
-
-        .certificate::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-            background: url('taylor/trophy.png') no-repeat center center;
-            background-size: cover;
-            opacity: 0.4;
-            transform: rotate(0deg);
         }
 
         /* Плавная прокрутка */
@@ -986,7 +906,7 @@
             }
 
             .nav-menu.active {
-                max-height: 1000px; /* Достаточно большое значение для отображения всех ссылок и подменю */
+                max-height: 1000px;
             }
 
             .hamburger {
@@ -1045,20 +965,6 @@
                 height: 30px;
             }
 
-            .quiz-container {
-                padding: 10px;
-            }
-
-            .quiz-navigation button {
-                padding: 8px 16px;
-                font-size: 0.9em;
-            }
-
-            .certificate {
-                padding: 10px;
-            }
-
-            /* Корректировка Swiper-карусели на мобильных устройствах */
             #egor .swiper-container {
                 max-width: 100%;
                 padding-left: 20px;
@@ -1070,7 +976,6 @@
                 height: 350px;
             }
 
-            /* Стили для выпадающего меню в мобильной версии */
             .dropdown-content {
                 display: none;
                 flex-direction: column;
@@ -1163,14 +1068,14 @@
             }
 
             .dropdown.active .dropdown-content {
-                max-height: 500px; /* Достаточно большое значение для отображения всех ссылок */
+                max-height: 500px;
             }
 
             .dropdown:hover .dropbtn::after {
                 transform: rotate(0deg);
             }
         }
-        /* Добавляем стили для отображения баланса */
+        /* Стили для отображения баланса */
         #balance-container {
             display: flex;
             align-items: center;
@@ -1194,24 +1099,23 @@
         <div class="nav-container">
             <a href="#home" class="nav-logo">Олек</a>
             <div class="nav-menu" id="nav-menu">
-                <a href="#home">Главная</a>
                 <a href="#about">Обо мне</a>
                 <a href="#soups">Супы дня</a>
+                <a href="#casino">Казино</a>
                 <a href="#egor">Егор Крид</a>
+                <a href="#shop">Магазин</a>
                 <div class="dropdown">
                     <a href="#" class="dropbtn">Развлечения</a>
                     <div class="dropdown-content">
                         <a href="swift-test.html">Тест Тейлор Свифт</a>
-                        <a href="casino.html">КАЗИНО</a> <!-- Новая ссылка -->
                         <!-- <a href="mini-game1.html">Мини-игра 1</a> -->
                         <!-- <a href="mini-game2.html">Мини-игра 2</a> -->
                     </div>
                 </div>
-                <a href="#gallery">Галерея</a>
-                <a href="#contact">Контакты</a>
-            <!-- Добавляем отображение баланса -->
+            </div>
+            <!-- Отображение баланса -->
             <div id="balance-container">
-                <div id="balance">Баланс: <span id="balance-amount">0</span> 💰</div>
+                <div id="balance">Баланс: <span id="balance-amount">0</span></div>
             </div>
             <div class="hamburger" id="hamburger">
                 <span></span>
@@ -1285,35 +1189,27 @@
                 <div class="swiper-slide"><img src="pics/egor5.jpg" alt="Егор Крид Фото 5"></div>
                 <!-- Добавьте больше изображений по необходимости -->
             </div>
-            <!-- Удаляем стрелки навигации -->
-            <!-- <div class="swiper-button-next"></div>
-            <div class="swiper-button-prev"></div> -->
         </div>
         <p>Егор Крид (настоящее имя Егор Николаевич Булаткин) — популярный российский певец, рэпер и автор песен. Родился 25 июня 1994 года в Пензе, Россия. Егор стал известен благодаря участию в шоу «Фабрика звёзд 7», после чего начал успешную музыкальную карьеру.</p>
         <p>Его дебютный альбом «Паспорт» вышел в 2013 году и сразу занял высокие позиции в чартах. Среди самых известных его песен — «Самая самая», «Будильник», «Холостяк», «Слушай Егор Крид» и многие другие. Егор активно сотрудничает с другими артистами и постоянно радует своих поклонников новыми треками и клипами.</p>
         <p>Кроме музыкальной деятельности, Егор активно занимается благотворительностью и участвует в различных социальных проектах. Он продолжает развиваться как артист и стремится приносить радость своим слушателям.</p>
     </section>
 
-    <!-- Секция "Галерея" -->
-    <section id="gallery" class="section">
-        <h2>Галерея</h2>
-        <div class="gallery">
-            <img src="pics/photo1.jpg" alt="Фото 1">
-            <img src="pics/photo2.jpg" alt="Фото 2">
-            <img src="pics/photo3.jpg" alt="Фото 3">
-            <img src="pics/photo4.jpg" alt="Фото 4">
-            <img src="pics/photo5.jpg" alt="Фото 5">
-            <img src="pics/photo6.jpg" alt="Фото 6">
-            <img src="pics/photo7.jpg" alt="Фото 7">
-            <img src="pics/photo8.jpg" alt="Фото 8">
-            <img src="pics/photo9.jpg" alt="Фото 9">
-            <img src="pics/photo10.jpg" alt="Фото 10">
-            <img src="pics/photo11.jpg" alt="Фото 11">
-            <img src="pics/photo12.jpg" alt="Фото 12">
-            <img src="pics/photo13.jpg" alt="Фото 13">
-            <!-- Добавьте больше изображений по необходимости -->
-        </div>
+    <!-- Секция "Казино" -->
+    <section id="casino" class="casino-section">
+        <a href="casino.html" class="casino-button">
+            <img src="pics/casino_image.jpg" alt="Казино">
+            
+        </a>
     </section>
+
+    <!-- В разделе "Магазин" на главной странице -->
+    <section id="shop" class="section">
+        <h2>Магазин</h2>
+        <p>Чтобы зайти в магазин перейдите в магазин</p>
+        <a href="shop.html" class="shop-button">Перейти в магазин</a>
+    </section>
+
 
     <!-- Секция "Контакты" -->
     <section id="contact" class="section">
@@ -1519,29 +1415,52 @@
                     effect: 'coverflow',
                     grabCursor: true,
                     centeredSlides: true,
-                    slidesPerView: 2.5, // Устанавливаем 2.5 слайда для частичной видимости боковых
+                    slidesPerView: 2.5,
                     loop: true,
-                    speed: 800, // Для более плавной анимации
+                    speed: 800,
                     coverflowEffect: {
                         rotate: 30,
                         stretch: 0,
                         depth: 200,
                         modifier: 1,
-                        slideShadows: false, // Отключаем встроенные тени
+                        slideShadows: false,
                     },
-                    freeMode: true, // Включаем свободный режим для инерции
-                    inertia: true, // Включаем инерцию
-                    slideToClickedSlide: true, // Позволяет переключаться на кликнутый слайд
-                    navigation: false, // Отключаем навигационные стрелки
+                    freeMode: true,
+                    inertia: true,
+                    slideToClickedSlide: true,
+                    navigation: false,
                     breakpoints: {
                         768: {
-                            slidesPerView: 1.5, // На мобильных устройствах показываем меньше слайдов
+                            slidesPerView: 1.5,
                         }
                     }
                 });
             })
             .catch((error) => {
                 console.error('Ошибка при загрузке изображений карусели "Егор Крид":', error);
+            });
+
+        // Загрузка содержимого магазина из shop.json
+        fetch('shop.json')
+            .then(response => response.json())
+            .then(data => {
+                const shopContent = document.getElementById('shop-content');
+                // Создаем элементы для отображения товаров
+                data.items.forEach(item => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.classList.add('shop-item');
+                    itemDiv.innerHTML = `
+                        <h3>${item.name}</h3>
+                        <img src="${item.image}" alt="${item.name}">
+                        <p>${item.description}</p>
+                        <p>Цена: ${item.price} монет</p>
+                        <button>Купить</button>
+                    `;
+                    shopContent.appendChild(itemDiv);
+                });
+            })
+            .catch(error => {
+                console.error('Ошибка при загрузке магазина:', error);
             });
     });
     </script>
